@@ -82,7 +82,7 @@ enum Code {
 // todo: make this not panic on failure
 impl Code {
     /// Will panic if it cannot convert to i64.
-    pub fn to_i64(&self) -> i64 {
+    fn to_i64(&self) -> i64 {
         match self {
             Self::Integer(x) => *x,
             Self::String(x) => x.parse().unwrap(),
@@ -218,6 +218,7 @@ impl Client {
                         Ok(item_details)
                     }
                     429 => Err(ItemsError::TooManyRequests),
+                    500 => Err(ItemsError::InternalServerError),
                     _ => Err(ItemsError::UnidentifiedStatusCode(status_code)),
                 }
             }
