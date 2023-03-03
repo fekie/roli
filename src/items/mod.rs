@@ -3,6 +3,8 @@ use reqwest::header;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
+pub mod util;
+
 const ITEM_DETAILS_API: &str = "https://www.rolimons.com/itemapi/itemdetails";
 
 #[derive(thiserror::Error, Debug, Default)]
