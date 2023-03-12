@@ -1,6 +1,6 @@
 [package]
 authors = ["Cayden <longwelldotpy@gmail.com>"]
-categories = ["api", "api-bindings"]
+categories = ["api-bindings"]
 description = "A low level wrapper for the Rolimons.com REST API."
 edition = "2021"
 homepage = "https://serde.rs/"
