@@ -19,6 +19,7 @@ Documentation can be found [here](https://docs.rs/roli/0.0.1/roli/).
 
 # Contributing
 There is still a lot of work to be done! Pull requests are welcome!
+
 Note that all public non-util functions are required to make exactly one api call.
 
 # License
