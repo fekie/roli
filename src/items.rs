@@ -3,8 +3,6 @@ use reqwest::header;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-pub mod util;
-
 const ITEM_DETAILS_API: &str = "https://www.rolimons.com/itemapi/itemdetails";
 
 #[derive(thiserror::Error, Debug, Default)]
@@ -172,8 +170,8 @@ impl ItemDetails {
 }
 
 impl AllItemDetailsResponse {
-    fn into_hashmap(self) -> Result<HashMap<u64, ItemDetails>, ItemsError> {
-        let mut item_details_map = HashMap::new();
+    fn into_vec(self) -> Result<Vec<ItemDetails>, ItemsError> {
+        let mut item_details_vec = Vec::new();
 
         for (item_id_string, codes) in self.items {
             let item_id = match item_id_string.parse() {
@@ -183,20 +181,18 @@ impl AllItemDetailsResponse {
 
             let item_details = ItemDetails::from_raw(item_id, codes)?;
 
-            item_details_map.insert(item_id, item_details);
+            item_details_vec.push(item_details);
         }
 
-        Ok(item_details_map)
+        Ok(item_details_vec)
     }
 }
 
 impl Client {
     /// A wrapper for <https://www.rolimons.com/itemapi/itemdetails>.
     ///
-    /// Does not require authentication. During a successful request, this method
-    /// returns a `HashMap` where the item ids are the keys and the corresponding
-    /// details are the values.
-    pub async fn all_item_details(&self) -> Result<HashMap<u64, ItemDetails>, ItemsError> {
+    /// Does not require authentication.
+    pub async fn all_item_details(&self) -> Result<Vec<ItemDetails>, ItemsError> {
         let request_result = self
             .reqwest_client
             .get(ITEM_DETAILS_API)
@@ -215,7 +211,7 @@ impl Client {
                             Err(_) => return Err(ItemsError::MalformedResponse),
                         };
 
-                        let item_details = raw.into_hashmap()?;
+                        let item_details = raw.into_vec()?;
 
                         Ok(item_details)
                     }
