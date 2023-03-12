@@ -6,9 +6,6 @@ A low level wrapper for the Rolimons.com REST API.
 
 This crate is a low level wrapper due to the fact that allowed requests to the API are limited. To maintain flexibiliy while also using the API endpoints responsibly, the user is expected to maintain their own caching.
 
-# Documentation
-Documentation can be found [here](https://docs.rs/roli/0.0.2/roli/).
-
 # API Coverage Checklist
 - [x] Items API
 - [ ] Trade Ad API
