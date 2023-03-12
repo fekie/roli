@@ -3,7 +3,6 @@ authors = ["Cayden <longwelldotpy@gmail.com>"]
 categories = ["api-bindings"]
 description = "A low level wrapper for the Rolimons.com REST API."
 edition = "2021"
-homepage = "https://serde.rs/"
 keywords = ["rolimons", "roli", "roblox", "api"]
 license = "MIT"
 name = "roli"
