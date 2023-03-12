@@ -4,6 +4,10 @@ version = "0.0.1"
 edition = "2021"
 repository = "https://github.com/Chloe-Woahie/roli-rs"
 authors = ["Cayden <longwelldotpy@gmail.com>"]
+license = "MIT"
+description = "A low level wrapper for the Rolimons.com REST API."
+homepage = "https://serde.rs/"
+readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
