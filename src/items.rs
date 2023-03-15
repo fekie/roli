@@ -90,13 +90,12 @@ enum Code {
     String(String),
 }
 
-// todo: make this not panic on failure
 impl Code {
-    /// Will panic if it cannot convert to i64.
-    fn to_i64(&self) -> i64 {
+    /// Returns an i64 inside an option, if the `Option` is `None`, there was a parsing error.
+    fn to_i64(&self) -> Option<i64> {
         match self {
-            Self::Integer(x) => *x,
-            Self::String(x) => x.parse().unwrap(),
+            Self::Integer(x) => Some(*x),
+            Self::String(x) => x.parse().ok(),
         }
     }
 }
@@ -122,46 +121,59 @@ impl ItemDetails {
             }
         };
 
-        let rap = codes[2].to_i64() as u64;
-        let valued = codes[3].to_i64() != -1;
-        let value = codes[4].to_i64() as u64;
+        // For these lines below, we return a ItemsError::MalformedResponse if we cannot parse
+        // the value to an i64.
+        let rap = match codes[2].to_i64() {
+            Some(x) => x as u64,
+            None => return Err(ItemsError::MalformedResponse),
+        };
+
+        let valued = match codes[3].to_i64() {
+            Some(x) => x != -1,
+            None => return Err(ItemsError::MalformedResponse),
+        };
+
+        let value = match codes[4].to_i64() {
+            Some(x) => x as u64,
+            None => return Err(ItemsError::MalformedResponse),
+        };
 
         let demand = match codes[5].to_i64() {
-            -1 => Demand::Unassigned,
-            0 => Demand::Terrible,
-            1 => Demand::Low,
-            2 => Demand::Normal,
-            3 => Demand::High,
-            4 => Demand::Amazing,
-            _ => unreachable!(),
+            Some(-1) => Demand::Unassigned,
+            Some(0) => Demand::Terrible,
+            Some(1) => Demand::Low,
+            Some(2) => Demand::Normal,
+            Some(3) => Demand::High,
+            Some(4) => Demand::Amazing,
+            _ => return Err(ItemsError::MalformedResponse),
         };
 
         let trend = match codes[6].to_i64() {
-            -1 => Trend::Unassigned,
-            0 => Trend::Lowering,
-            1 => Trend::Unstable,
-            2 => Trend::Stable,
-            3 => Trend::Raising,
-            4 => Trend::Fluctuating,
-            _ => unreachable!(),
+            Some(-1) => Trend::Unassigned,
+            Some(0) => Trend::Lowering,
+            Some(1) => Trend::Unstable,
+            Some(2) => Trend::Stable,
+            Some(3) => Trend::Raising,
+            Some(4) => Trend::Fluctuating,
+            _ => return Err(ItemsError::MalformedResponse),
         };
 
         let projected = match codes[7].to_i64() {
-            1 => true,
-            -1 => false,
-            _ => unreachable!(),
+            Some(1) => true,
+            Some(-1) => false,
+            _ => return Err(ItemsError::MalformedResponse),
         };
 
         let hyped = match codes[8].to_i64() {
-            1 => true,
-            -1 => false,
-            _ => unreachable!(),
+            Some(1) => true,
+            Some(-1) => false,
+            _ => return Err(ItemsError::MalformedResponse),
         };
 
         let rare = match codes[9].to_i64() {
-            1 => true,
-            -1 => false,
-            _ => unreachable!(),
+            Some(1) => true,
+            Some(-1) => false,
+            _ => return Err(ItemsError::MalformedResponse),
         };
 
         Ok(ItemDetails {
