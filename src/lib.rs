@@ -8,6 +8,7 @@
 #[warn(missing_docs)]
 mod items;
 
+// Re-export reqwest so people can use the correct version.
 pub use reqwest;
 
 const USER_AGENT: &str =

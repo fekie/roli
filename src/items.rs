@@ -46,6 +46,20 @@ pub enum Trend {
     Fluctuating,
 }
 
+/// Represents the details of an item. All details are from rolimons.com.
+///
+/// An ItemDetails struct contains the following fields:
+/// - item_id: a unique identifier of the item.
+/// - item_name: a string representing the name of the item.
+/// - acronym: an optional string representing the acronym of the item, as not all items have an acronym.
+/// - rap: a recent average price of the item.
+/// - valued: a boolean indicating whether the item is considered valuable.
+/// - value: the value of the item.
+/// - demand: an enum representing the demand for the item.
+/// - trend: an enum representing the trend of the item.
+/// - projected: a boolean indicating whether the item is projected.
+/// - hyped: a boolean indicating whether the item is hyped.
+/// - rare: a boolean indicating whether the item is rare.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Serialize, Deserialize)]
 pub struct ItemDetails {
     pub item_id: u64,
@@ -222,5 +236,41 @@ impl Client {
             }
             Err(e) => Err(ItemsError::ReqwestError(e)),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_item_details_from_raw() {
+        // Test a valid code vector for an item
+        let codes = vec![
+            Code::String("item1".to_string()),
+            Code::String("".to_string()),
+            Code::Integer(100),
+            Code::Integer(1),
+            Code::Integer(200),
+            Code::Integer(3),
+            Code::Integer(4),
+            Code::Integer(1),
+            Code::Integer(1),
+            Code::Integer(1),
+        ];
+
+        let item_details = ItemDetails::from_raw(123, codes).unwrap();
+
+        assert_eq!(item_details.item_id, 123);
+        assert_eq!(item_details.item_name, "item1".to_string());
+        assert_eq!(item_details.acronym, None);
+        assert_eq!(item_details.rap, 100);
+        assert!(item_details.valued);
+        assert_eq!(item_details.value, 200);
+        assert_eq!(item_details.demand, Demand::High);
+        assert_eq!(item_details.trend, Trend::Fluctuating);
+        assert!(item_details.projected);
+        assert!(item_details.hyped);
+        assert!(item_details.rare);
     }
 }
