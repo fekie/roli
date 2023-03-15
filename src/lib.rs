@@ -6,7 +6,11 @@
 //! their own caching.
 
 #[warn(missing_docs)]
+mod deals;
+#[warn(missing_docs)]
 mod items;
+
+pub use items::ItemDetails;
 
 // Re-export reqwest so people can use the correct version.
 pub use reqwest;
