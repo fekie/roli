@@ -46,32 +46,29 @@ pub enum Trend {
     Fluctuating,
 }
 
-/// Represents the details of an item. All details are from rolimons.com.
-///
-/// An ItemDetails struct contains the following fields:
-/// - item_id: a unique identifier of the item.
-/// - item_name: a string representing the name of the item.
-/// - acronym: an optional string representing the acronym of the item, as not all items have an acronym.
-/// - rap: a recent average price of the item.
-/// - valued: a boolean indicating whether the item is considered valuable.
-/// - value: the value of the item.
-/// - demand: an enum representing the demand for the item.
-/// - trend: an enum representing the trend of the item.
-/// - projected: a boolean indicating whether the item is projected.
-/// - hyped: a boolean indicating whether the item is hyped.
-/// - rare: a boolean indicating whether the item is rare.
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Serialize, Deserialize)]
+/// Struct representing details of an item (using Rolimons information).
 pub struct ItemDetails {
+    /// The ID of the item.
     pub item_id: u64,
+    /// The name of the item.
     pub item_name: String,
+    /// An optional acronym for the item.
     pub acronym: Option<String>,
+    /// The Recent Average Price of the item.
     pub rap: u64,
+    /// Whether the item is valued or not.
     pub valued: bool,
+    /// The value of the item.
     pub value: u64,
+    /// The demand of the item.
     pub demand: Demand,
+    /// The trend of the item.
     pub trend: Trend,
+    /// Whether the item is projected or not.
     pub projected: bool,
+    /// Whether the item is hyped or not.
     pub hyped: bool,
+    /// Whether the item is rare or not.
     pub rare: bool,
 }
 
