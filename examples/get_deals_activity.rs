@@ -1,4 +1,4 @@
-use roli::deals::{Activity, PriceUpdate};
+use roli::deals::Activity;
 
 #[tokio::main]
 async fn main() {
