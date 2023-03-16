@@ -1,28 +1,9 @@
-use crate::Client;
+use crate::{Client, Code, RoliError};
 use reqwest::header;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 const ITEM_DETAILS_API: &str = "https://www.rolimons.com/itemapi/itemdetails";
-
-#[derive(thiserror::Error, Debug, Default)]
-pub enum ItemsError {
-    #[default]
-    #[error("Too Many Requests")]
-    TooManyRequests,
-    #[error("Internal Server Error")]
-    InternalServerError,
-    #[error("Malformed Response")]
-    MalformedResponse,
-    /// Used for any status codes that do not fit any enum
-    /// variants of this error. If you encounter this enum variant,
-    /// please submit an issue so a variant can be made or the
-    /// crate can be fixed.
-    #[error("Unidentified Status Code {0}")]
-    UnidentifiedStatusCode(u16),
-    #[error("RequestError {0}")]
-    ReqwestError(reqwest::Error),
-}
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Serialize, Deserialize)]
 pub enum Demand {
@@ -80,38 +61,8 @@ struct AllItemDetailsResponse {
     items: HashMap<String, Vec<Code>>,
 }
 
-// todo: share this
-/// Used for holding either an integer or a string in [`AllItemDetailsResponse`].
-/// This is necessary as (for some reason) numbers are represented as strings
-/// in the api response.
-#[derive(Serialize, Deserialize)]
-#[serde(untagged)]
-enum Code {
-    Integer(i64),
-    String(String),
-}
-
-impl Code {
-    /// Returns an i64 inside an option, if the `Option` is `None`, there was a parsing error.
-    fn to_i64(&self) -> Option<i64> {
-        match self {
-            Self::Integer(x) => Some(*x),
-            Self::String(x) => x.parse().ok(),
-        }
-    }
-}
-
-impl std::fmt::Display for Code {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::Integer(x) => write!(f, "{}", x),
-            Self::String(x) => write!(f, "{}", x),
-        }
-    }
-}
-
 impl ItemDetails {
-    fn from_raw(item_id: u64, codes: Vec<Code>) -> Result<Self, ItemsError> {
+    fn from_raw(item_id: u64, codes: Vec<Code>) -> Result<Self, RoliError> {
         let item_name = codes[0].to_string();
 
         let acronym = {
@@ -126,17 +77,17 @@ impl ItemDetails {
         // the value to an i64.
         let rap = match codes[2].to_i64() {
             Some(x) => x as u64,
-            None => return Err(ItemsError::MalformedResponse),
+            None => return Err(RoliError::MalformedResponse),
         };
 
         let valued = match codes[3].to_i64() {
             Some(x) => x != -1,
-            None => return Err(ItemsError::MalformedResponse),
+            None => return Err(RoliError::MalformedResponse),
         };
 
         let value = match codes[4].to_i64() {
             Some(x) => x as u64,
-            None => return Err(ItemsError::MalformedResponse),
+            None => return Err(RoliError::MalformedResponse),
         };
 
         let demand = match codes[5].to_i64() {
@@ -146,7 +97,7 @@ impl ItemDetails {
             Some(2) => Demand::Normal,
             Some(3) => Demand::High,
             Some(4) => Demand::Amazing,
-            _ => return Err(ItemsError::MalformedResponse),
+            _ => return Err(RoliError::MalformedResponse),
         };
 
         let trend = match codes[6].to_i64() {
@@ -156,25 +107,25 @@ impl ItemDetails {
             Some(2) => Trend::Stable,
             Some(3) => Trend::Raising,
             Some(4) => Trend::Fluctuating,
-            _ => return Err(ItemsError::MalformedResponse),
+            _ => return Err(RoliError::MalformedResponse),
         };
 
         let projected = match codes[7].to_i64() {
             Some(1) => true,
             Some(-1) => false,
-            _ => return Err(ItemsError::MalformedResponse),
+            _ => return Err(RoliError::MalformedResponse),
         };
 
         let hyped = match codes[8].to_i64() {
             Some(1) => true,
             Some(-1) => false,
-            _ => return Err(ItemsError::MalformedResponse),
+            _ => return Err(RoliError::MalformedResponse),
         };
 
         let rare = match codes[9].to_i64() {
             Some(1) => true,
             Some(-1) => false,
-            _ => return Err(ItemsError::MalformedResponse),
+            _ => return Err(RoliError::MalformedResponse),
         };
 
         Ok(ItemDetails {
@@ -194,13 +145,13 @@ impl ItemDetails {
 }
 
 impl AllItemDetailsResponse {
-    fn into_vec(self) -> Result<Vec<ItemDetails>, ItemsError> {
+    fn into_vec(self) -> Result<Vec<ItemDetails>, RoliError> {
         let mut item_details_vec = Vec::new();
 
         for (item_id_string, codes) in self.items {
             let item_id = match item_id_string.parse() {
                 Ok(x) => x,
-                Err(_) => return Err(ItemsError::MalformedResponse),
+                Err(_) => return Err(RoliError::MalformedResponse),
             };
 
             let item_details = ItemDetails::from_raw(item_id, codes)?;
@@ -217,7 +168,7 @@ impl Client {
     /// A wrapper for <https://www.rolimons.com/itemapi/itemdetails>.
     ///
     /// Does not require authentication.
-    pub async fn all_item_details(&self) -> Result<Vec<ItemDetails>, ItemsError> {
+    pub async fn all_item_details(&self) -> Result<Vec<ItemDetails>, RoliError> {
         let request_result = self
             .reqwest_client
             .get(ITEM_DETAILS_API)
@@ -233,19 +184,19 @@ impl Client {
                     200 => {
                         let raw = match response.json::<AllItemDetailsResponse>().await {
                             Ok(x) => x,
-                            Err(_) => return Err(ItemsError::MalformedResponse),
+                            Err(_) => return Err(RoliError::MalformedResponse),
                         };
 
                         let item_details = raw.into_vec()?;
 
                         Ok(item_details)
                     }
-                    429 => Err(ItemsError::TooManyRequests),
-                    500 => Err(ItemsError::InternalServerError),
-                    _ => Err(ItemsError::UnidentifiedStatusCode(status_code)),
+                    429 => Err(RoliError::TooManyRequests),
+                    500 => Err(RoliError::InternalServerError),
+                    _ => Err(RoliError::UnidentifiedStatusCode(status_code)),
                 }
             }
-            Err(e) => Err(ItemsError::ReqwestError(e)),
+            Err(e) => Err(RoliError::ReqwestError(e)),
         }
     }
 }

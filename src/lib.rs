@@ -7,6 +7,8 @@
 
 #![warn(missing_docs)]
 
+use serde::{Deserialize, Serialize};
+
 pub mod deals;
 pub mod items;
 
@@ -21,12 +23,17 @@ const USER_AGENT: &str =
 ///
 /// Contains any necessary authentication and the reqwest client. All
 /// [`Client`] methods make exactly one api call.
+#[derive(Clone, Debug, Default)]
 pub struct Client {
-    pub roli_verification: Option<String>,
+    roli_verification: Option<String>,
     reqwest_client: reqwest::Client,
 }
 
 impl Client {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
     /// Returns whether the client has `self.roliverification`
     /// set to `Some(_)`. Does not check to see if the token is valid.
     pub fn contains_roli_verification(&self) -> bool {
@@ -69,4 +76,56 @@ impl ClientBuilder {
         self.reqwest_client = Some(reqwest_client);
         self
     }
+}
+
+/// Used for holding either an integer or a string in [`AllItemDetailsResponse`].
+/// This is necessary as (for some reason) numbers are represented as strings
+/// in the api response.
+#[derive(Serialize, Deserialize)]
+#[serde(untagged)]
+pub(crate) enum Code {
+    Integer(i64),
+    String(String),
+}
+
+impl Code {
+    // todo: make this return a normal rolierror when we make it
+    /// Returns an i64 inside an option, if the `Option` is `None`, there was a parsing error.
+    fn to_i64(&self) -> Option<i64> {
+        match self {
+            Self::Integer(x) => Some(*x),
+            Self::String(x) => x.parse().ok(),
+        }
+    }
+}
+
+impl std::fmt::Display for Code {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Integer(x) => write!(f, "{}", x),
+            Self::String(x) => write!(f, "{}", x),
+        }
+    }
+}
+
+#[derive(thiserror::Error, Debug, Default)]
+pub enum RoliError {
+    /// Used when an endpoint returns `success: false`.
+    #[error("Request Returned Unsuccessful")]
+    RequestReturnedUnsuccessful,
+    #[default]
+    #[error("Too Many Requests")]
+    TooManyRequests,
+    #[error("Internal Server Error")]
+    InternalServerError,
+    #[error("Malformed Response")]
+    MalformedResponse,
+    /// Used for any status codes that do not fit any enum
+    /// variants of this error. If you encounter this enum variant,
+    /// please submit an issue so a variant can be made or the
+    /// crate can be fixed.
+    #[error("Unidentified Status Code {0}")]
+    UnidentifiedStatusCode(u16),
+    #[error("RequestError {0}")]
+    ReqwestError(reqwest::Error),
 }

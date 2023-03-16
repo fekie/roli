@@ -1,4 +1,4 @@
-use crate::Client;
+use crate::{Client, Code, RoliError};
 use reqwest::header;
 use serde::{Deserialize, Serialize};
 
@@ -42,9 +42,9 @@ pub enum Activity {
 impl Activity {
     /// Converts a vector of Code into an Activity object representing a Roblox item activity, which is
     /// either a [`Deal`] or a [`RapUpdate`]
-    fn from_raw(codes: Vec<Code>) -> Result<Self, DealsError> {
+    fn from_raw(codes: Vec<Code>) -> Result<Self, RoliError> {
         if codes.len() != 5 {
-            return Err(DealsError::MalformedResponse);
+            return Err(RoliError::MalformedResponse);
         }
 
         // A deal follows an a pattern of:
@@ -70,24 +70,24 @@ impl Activity {
 
         let is_price_update = match codes[1].to_i64() {
             Some(x) => x == 0,
-            None => return Err(DealsError::MalformedResponse),
+            None => return Err(RoliError::MalformedResponse),
         };
 
         let timestamp = match codes[0].to_i64() {
             Some(x) => x as u64,
-            None => return Err(DealsError::MalformedResponse),
+            None => return Err(RoliError::MalformedResponse),
         };
 
         let item_id = match codes[2].to_i64() {
             Some(x) => x as u64,
-            None => return Err(DealsError::MalformedResponse),
+            None => return Err(RoliError::MalformedResponse),
         };
 
         match is_price_update {
             true => {
                 let price = match codes[4].to_i64() {
                     Some(x) => x as u64,
-                    None => return Err(DealsError::MalformedResponse),
+                    None => return Err(RoliError::MalformedResponse),
                 };
 
                 Ok(Activity::PriceUpdate(PriceUpdate {
@@ -99,7 +99,7 @@ impl Activity {
             false => {
                 let rap = match codes[4].to_i64() {
                     Some(x) => x as u64,
-                    None => return Err(DealsError::MalformedResponse),
+                    None => return Err(RoliError::MalformedResponse),
                 };
 
                 Ok(Activity::RapUpdate(RapUpdate {
@@ -119,58 +119,6 @@ struct DealsActivityResponse {
     activities: Vec<Vec<Code>>,
 }
 
-// todo: share this
-/// Used in [`DealsActivityResponse`] as, for some reason, some numbers are an integer,
-/// and some are strings.
-#[derive(Serialize, Deserialize)]
-#[serde(untagged)]
-enum Code {
-    Integer(i64),
-    String(String),
-}
-
-impl Code {
-    // todo: make this return a normal rolierror when we make it
-    /// Returns an i64 inside an option, if the `Option` is `None`, there was a parsing error.
-    fn to_i64(&self) -> Option<i64> {
-        match self {
-            Self::Integer(x) => Some(*x),
-            Self::String(x) => x.parse().ok(),
-        }
-    }
-}
-
-impl std::fmt::Display for Code {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::Integer(x) => write!(f, "{}", x),
-            Self::String(x) => write!(f, "{}", x),
-        }
-    }
-}
-
-#[derive(thiserror::Error, Debug, Default)]
-pub enum DealsError {
-    #[default]
-    /// Used when an endpoint returns `success: false`.
-    #[error("Request Returned Unsuccessful")]
-    RequestReturnedUnsuccessful,
-    #[error("Too Many Requests")]
-    TooManyRequests,
-    #[error("Internal Server Error")]
-    InternalServerError,
-    #[error("Malformed Response")]
-    MalformedResponse,
-    /// Used for any status codes that do not fit any enum
-    /// variants of this error. If you encounter this enum variant,
-    /// please submit an issue so a variant can be made or the
-    /// crate can be fixed.
-    #[error("Unidentified Status Code {0}")]
-    UnidentifiedStatusCode(u16),
-    #[error("RequestError {0}")]
-    ReqwestError(reqwest::Error),
-}
-
 impl Client {
     // TODO: write example
     /// A wrapper for <https://www.rolimons.com/api/activity2>.
@@ -179,10 +127,10 @@ impl Client {
     ///
     /// Provides chunks of information on new deals, a cache is likely required for
     /// full use of the api. Returns a Vec of [`Activity`] on success. An [`Activity`] contains either
-    /// a [`Deal`] or [`RapUpdate`].
+    /// a [`PriceUpdate`] or [`RapUpdate`].
     ///
     /// On the Rolimon's deal's page, this api is polled roughly every 3 seconds.
-    pub async fn deals_activity(&self) -> Result<Vec<Activity>, DealsError> {
+    pub async fn deals_activity(&self) -> Result<Vec<Activity>, RoliError> {
         let request_result = self
             .reqwest_client
             .get(DEALS_ACTIVITY_API)
@@ -198,7 +146,7 @@ impl Client {
                     200 => {
                         let raw = match response.json::<DealsActivityResponse>().await {
                             Ok(x) => x,
-                            Err(_) => return Err(DealsError::MalformedResponse),
+                            Err(_) => return Err(RoliError::MalformedResponse),
                         };
 
                         let mut activities = Vec::new();
