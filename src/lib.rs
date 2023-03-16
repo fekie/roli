@@ -92,7 +92,6 @@ pub struct ClientBuilder {
 }
 
 impl Code {
-    // todo: make this return a normal rolierror when we make it
     /// Returns an i64 inside if the operation was successful, otherwise returns a [`RoliError::MalformedResponse`]
     /// (as [`Code`] is only used to parse responses).
     fn to_i64(&self) -> Result<i64, RoliError> {
@@ -149,10 +148,6 @@ impl ClientBuilder {
 
     /// Sets the value for the optional `roli_verification` field.
     ///
-    /// # Arguments
-    ///
-    /// * `roli_verification` - A `String` representing the verification token for the Rolimon's API.
-    ///
     /// # Examples
     ///
     /// ```
@@ -167,10 +162,6 @@ impl ClientBuilder {
     }
 
     /// Sets the value for the optional `reqwest_client` field.
-    ///
-    /// # Arguments
-    ///
-    /// * `reqwest_client` - A custom `reqwest::Client` instance to use for sending HTTP requests.
     ///
     /// # Examples
     ///

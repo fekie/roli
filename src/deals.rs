@@ -148,12 +148,12 @@ impl Client {
 
                         Ok(activities)
                     }
-                    // todo finish this
-                    _ => todo!(),
+                    429 => Err(RoliError::TooManyRequests),
+                    500 => Err(RoliError::InternalServerError),
+                    _ => Err(RoliError::UnidentifiedStatusCode(status_code)),
                 }
             }
-            // todo finish this
-            Err(e) => todo!(),
+            Err(e) => Err(RoliError::ReqwestError(e)),
         }
     }
 }
