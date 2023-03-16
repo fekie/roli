@@ -8,13 +8,108 @@ const DEALS_ACTIVITY_API: &str = "https://www.rolimons.com/api/activity2";
 ///
 /// The meaning of the second and fourth values in the item part of the
 /// json are currently unknown. Please submit an issue or pull request if you know what these are.
-pub struct Deal {
-    /// The unique identifier of the seller.
-    pub seller_id: u64,
+#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
+pub struct PriceUpdate {
+    /// The timestamp of the activity in unix time.
+    pub timestamp: u64,
     /// The unique identifier of the item being sold.
     pub item_id: u64,
     /// The price of the item being sold.
-    pub item_price: u64,
+    pub price: u64,
+}
+
+/// A rap update for an item on the Rolimon's deal's page.
+///
+/// These are usually only used for validing that deals are within deal % on the client side
+/// of the deals page.
+#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
+pub struct RapUpdate {
+    /// The timestamp of the activity in unix time.
+    pub timestamp: u64,
+    /// The unique identifier of the item being sold.
+    pub item_id: u64,
+    /// The updated rap of an item.
+    pub rap: u64,
+}
+
+/// The objects returned from parsing the json from the endpoint <https://www.rolimons.com/api/activity2>.
+#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
+pub enum Activity {
+    PriceUpdate(PriceUpdate),
+    RapUpdate(RapUpdate),
+}
+
+impl Activity {
+    /// Converts a vector of Code into an Activity object representing a Roblox item activity, which is
+    /// either a [`Deal`] or a [`RapUpdate`]
+    fn from_raw(codes: Vec<Code>) -> Result<Self, DealsError> {
+        if codes.len() != 5 {
+            return Err(DealsError::MalformedResponse);
+        }
+
+        // A deal follows an a pattern of:
+        // [
+        //     1678939600,
+        //     0,
+        //     "3016210752",
+        //     0,
+        //     108
+        // ]
+
+        // Whereas a rap update follows the pattern of:
+        // [
+        //     1678939605,
+        //     1,
+        //     "3016210752",
+        //     0,
+        //     92
+        // ]
+
+        // If the second value is a 1, then the fifth value determines the rap.
+        // If the second value is a 0, then the fifth value determines the price.
+
+        let is_price_update = match codes[1].to_i64() {
+            Some(x) => x == 0,
+            None => return Err(DealsError::MalformedResponse),
+        };
+
+        let timestamp = match codes[0].to_i64() {
+            Some(x) => x as u64,
+            None => return Err(DealsError::MalformedResponse),
+        };
+
+        let item_id = match codes[2].to_i64() {
+            Some(x) => x as u64,
+            None => return Err(DealsError::MalformedResponse),
+        };
+
+        match is_price_update {
+            true => {
+                let price = match codes[4].to_i64() {
+                    Some(x) => x as u64,
+                    None => return Err(DealsError::MalformedResponse),
+                };
+
+                Ok(Activity::PriceUpdate(PriceUpdate {
+                    timestamp,
+                    item_id,
+                    price,
+                }))
+            }
+            false => {
+                let rap = match codes[4].to_i64() {
+                    Some(x) => x as u64,
+                    None => return Err(DealsError::MalformedResponse),
+                };
+
+                Ok(Activity::RapUpdate(RapUpdate {
+                    timestamp,
+                    item_id,
+                    rap,
+                }))
+            }
+        }
+    }
 }
 
 /// Used for holding the raw json response from <https://www.rolimons.com/api/activity2>.
@@ -24,6 +119,7 @@ struct DealsActivityResponse {
     activities: Vec<Vec<Code>>,
 }
 
+// todo: share this
 /// Used in [`DealsActivityResponse`] as, for some reason, some numbers are an integer,
 /// and some are strings.
 #[derive(Serialize, Deserialize)]
@@ -33,9 +129,32 @@ enum Code {
     String(String),
 }
 
+impl Code {
+    // todo: make this return a normal rolierror when we make it
+    /// Returns an i64 inside an option, if the `Option` is `None`, there was a parsing error.
+    fn to_i64(&self) -> Option<i64> {
+        match self {
+            Self::Integer(x) => Some(*x),
+            Self::String(x) => x.parse().ok(),
+        }
+    }
+}
+
+impl std::fmt::Display for Code {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Integer(x) => write!(f, "{}", x),
+            Self::String(x) => write!(f, "{}", x),
+        }
+    }
+}
+
 #[derive(thiserror::Error, Debug, Default)]
 pub enum DealsError {
     #[default]
+    /// Used when an endpoint returns `success: false`.
+    #[error("Request Returned Unsuccessful")]
+    RequestReturnedUnsuccessful,
     #[error("Too Many Requests")]
     TooManyRequests,
     #[error("Internal Server Error")]
@@ -53,13 +172,17 @@ pub enum DealsError {
 }
 
 impl Client {
+    // TODO: write example
     /// A wrapper for <https://www.rolimons.com/api/activity2>.
     ///
     /// Does not require authentication.
     ///
     /// Provides chunks of information on new deals, a cache is likely required for
-    /// full use of the api.
-    pub async fn get_deals_activity(&self) -> Result<Vec<Deal>, DealsError> {
+    /// full use of the api. Returns a Vec of [`Activity`] on success. An [`Activity`] contains either
+    /// a [`Deal`] or [`RapUpdate`].
+    ///
+    /// On the Rolimon's deal's page, this api is polled roughly every 3 seconds.
+    pub async fn deals_activity(&self) -> Result<Vec<Activity>, DealsError> {
         let request_result = self
             .reqwest_client
             .get(DEALS_ACTIVITY_API)
@@ -77,12 +200,21 @@ impl Client {
                             Ok(x) => x,
                             Err(_) => return Err(DealsError::MalformedResponse),
                         };
+
+                        let mut activities = Vec::new();
+
+                        for raw_activity_codes in raw.activities {
+                            let activity = Activity::from_raw(raw_activity_codes)?;
+                            activities.push(activity)
+                        }
+
+                        Ok(activities)
                     }
+                    // todo finish this
                     _ => todo!(),
                 }
-
-                todo!()
             }
+            // todo finish this
             Err(e) => todo!(),
         }
     }

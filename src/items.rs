@@ -80,6 +80,7 @@ struct AllItemDetailsResponse {
     items: HashMap<String, Vec<Code>>,
 }
 
+// todo: share this
 /// Used for holding either an integer or a string in [`AllItemDetailsResponse`].
 /// This is necessary as (for some reason) numbers are represented as strings
 /// in the api response.
@@ -212,6 +213,7 @@ impl AllItemDetailsResponse {
 }
 
 impl Client {
+    // TODO: write example
     /// A wrapper for <https://www.rolimons.com/itemapi/itemdetails>.
     ///
     /// Does not require authentication.
