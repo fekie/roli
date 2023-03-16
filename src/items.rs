@@ -5,25 +5,39 @@ use std::collections::HashMap;
 
 const ITEM_DETAILS_API: &str = "https://www.rolimons.com/itemapi/itemdetails";
 
+/// Represents the demand of an item.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Serialize, Deserialize)]
 pub enum Demand {
+    /// The demand of the item is unassigned.
     #[default]
     Unassigned,
+    /// The demand of the item is terrible.
     Terrible,
+    /// The demand of the item is low.
     Low,
+    /// The demand of the item is normal.
     Normal,
+    /// The demand of the item is high.
     High,
+    /// The demand of the item is amazing.
     Amazing,
 }
 
+/// Represents the trend of an item.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Serialize, Deserialize)]
 pub enum Trend {
     #[default]
+    /// The trend of the item is unassigned.
     Unassigned,
+    /// The trend of the item is lowering.
     Lowering,
+    /// The trend of the item is unstable.
     Unstable,
+    /// The trend of the item is stable.
     Stable,
+    /// The trend of the item is raising.
     Raising,
+    /// The trend of the item is fluctuating.
     Fluctuating,
 }
 
