@@ -4,14 +4,10 @@ use roli::deals::{Activity, PriceUpdate};
 async fn main() {
     let client = roli::ClientBuilder::new().build();
     let activites = client.deals_activity().await.unwrap();
-    let price_updates = activites
-        .iter()
-        .filter_map(|x| match x {
-            Activity::PriceUpdate(x) => Some(x),
-            Activity::RapUpdate(_) => None,
-        })
-        .collect::<Vec<&PriceUpdate>>();
+    let price_updates = activites.iter().filter_map(|x| match x {
+        Activity::PriceUpdate(x) => Some(x),
+        Activity::RapUpdate(_) => None,
+    });
 
-    println!("{:?}", price_updates);
-    println!("Price Updates Count: {}", price_updates.len());
+    println!("Price Updates Count: {}", price_updates.count());
 }
