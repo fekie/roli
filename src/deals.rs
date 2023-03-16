@@ -4,11 +4,20 @@ use serde::{Deserialize, Serialize};
 
 const DEALS_ACTIVITY_API: &str = "https://www.rolimons.com/api/activity2";
 
+/// The objects returned from parsing the json from the endpoint <https://www.rolimons.com/api/activity2>.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+pub enum Activity {
+    /// A variant for a price update activity.
+    PriceUpdate(PriceUpdate),
+    /// A variant for a rap update activity.
+    RapUpdate(RapUpdate),
+}
+
 /// A struct for a deal on the Rolimon's deal's page.
 ///
 /// The meaning of the second and fourth values in the item part of the
 /// json are currently unknown. Please submit an issue or pull request if you know what these are.
-#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Serialize, Deserialize)]
 pub struct PriceUpdate {
     /// The timestamp of the activity in unix time.
     pub timestamp: u64,
@@ -22,7 +31,7 @@ pub struct PriceUpdate {
 ///
 /// These are usually only used for validing that deals are within deal % on the client side
 /// of the deals page.
-#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Serialize, Deserialize)]
 pub struct RapUpdate {
     /// The timestamp of the activity in unix time.
     pub timestamp: u64,
@@ -32,13 +41,11 @@ pub struct RapUpdate {
     pub rap: u64,
 }
 
-/// The objects returned from parsing the json from the endpoint <https://www.rolimons.com/api/activity2>.
-#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
-pub enum Activity {
-    /// A variant for a price update activity.
-    PriceUpdate(PriceUpdate),
-    /// A variant for a rap update activity.
-    RapUpdate(RapUpdate),
+/// Used for holding the raw json response from <https://www.rolimons.com/api/activity2>.
+#[derive(Serialize, Deserialize)]
+struct DealsActivityResponse {
+    success: bool,
+    activities: Vec<Vec<Code>>,
 }
 
 impl Activity {
@@ -100,13 +107,6 @@ impl Activity {
             }
         }
     }
-}
-
-/// Used for holding the raw json response from <https://www.rolimons.com/api/activity2>.
-#[derive(Serialize, Deserialize)]
-struct DealsActivityResponse {
-    success: bool,
-    activities: Vec<Vec<Code>>,
 }
 
 impl Client {

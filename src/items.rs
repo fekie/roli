@@ -42,6 +42,7 @@ pub enum Trend {
 }
 
 /// Struct representing details of an item (using Rolimons information).
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Serialize, Deserialize)]
 pub struct ItemDetails {
     /// The ID of the item.
     pub item_id: u64,
@@ -68,7 +69,7 @@ pub struct ItemDetails {
 }
 
 /// Used for holding the raw json response from <https://www.rolimons.com/itemapi/itemdetails>.
-#[derive(Serialize, Deserialize)]
+#[derive(Default, Serialize, Deserialize)]
 struct AllItemDetailsResponse {
     success: bool,
     item_count: u64,
