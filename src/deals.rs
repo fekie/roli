@@ -68,6 +68,9 @@ impl Activity {
         // If the second value is a 1, then the fifth value determines the rap.
         // If the second value is a 0, then the fifth value determines the price.
 
+        // The fourth value of these is unknown, but some analysis of the client code
+        // makes this value appear to only be used internally, if at all.
+
         let is_price_update = codes[1].to_i64()? == 0;
 
         let timestamp = codes[0].to_i64()? as u64;
