@@ -7,6 +7,11 @@
 //!
 //! All endpoints are accessed from a [`Client`]
 //!
+//! # API Coverage Checklist
+//! - [x] Items API
+//! - [x] Deals API
+//! - [ ] Trade Ad API
+//!
 //! # Quick Start
 //!
 //! This code snippet allows you to get a list of all limited items
