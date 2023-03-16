@@ -10,9 +10,8 @@ A low level wrapper for the Rolimons.com REST API.
 
 # API Coverage Checklist
 - [x] Items API
+- [x] Deals API
 - [ ] Trade Ad API
-- [ ] Deals API
-- [ ] Games API
 
 (more to be added, issues for API coverage requests welcome)
 
