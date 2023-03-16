@@ -35,7 +35,9 @@ pub struct RapUpdate {
 /// The objects returned from parsing the json from the endpoint <https://www.rolimons.com/api/activity2>.
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
 pub enum Activity {
+    /// A variant for a price update activity.
     PriceUpdate(PriceUpdate),
+    /// A variant for a rap update activity.
     RapUpdate(RapUpdate),
 }
 

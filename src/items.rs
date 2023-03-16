@@ -49,7 +49,7 @@ pub struct ItemDetails {
     pub item_name: String,
     /// An optional acronym for the item.
     pub acronym: Option<String>,
-    /// The Recent Average Price of the item.
+    /// The recent average price of the item.
     pub rap: u64,
     /// Whether the item is valued or not.
     pub valued: bool,
