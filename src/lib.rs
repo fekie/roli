@@ -5,12 +5,10 @@
 //! using the api endpoints responsibly, the user is expected to maintain
 //! their own caching.
 
-#[warn(missing_docs)]
-pub mod deals;
-#[warn(missing_docs)]
-pub mod items;
+#![warn(missing_docs)]
 
-pub use items::ItemDetails;
+pub mod deals;
+pub mod items;
 
 // Re-export reqwest so people can use the correct version.
 pub use reqwest;
@@ -24,7 +22,7 @@ const USER_AGENT: &str =
 /// Contains any necessary authentication and the reqwest client. All
 /// [`Client`] methods make exactly one api call.
 pub struct Client {
-    roli_verification: Option<String>,
+    pub roli_verification: Option<String>,
     reqwest_client: reqwest::Client,
 }
 
