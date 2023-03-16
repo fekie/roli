@@ -68,27 +68,15 @@ impl Activity {
         // If the second value is a 1, then the fifth value determines the rap.
         // If the second value is a 0, then the fifth value determines the price.
 
-        let is_price_update = match codes[1].to_i64() {
-            Some(x) => x == 0,
-            None => return Err(RoliError::MalformedResponse),
-        };
+        let is_price_update = codes[1].to_i64()? == 0;
 
-        let timestamp = match codes[0].to_i64() {
-            Some(x) => x as u64,
-            None => return Err(RoliError::MalformedResponse),
-        };
+        let timestamp = codes[0].to_i64()? as u64;
 
-        let item_id = match codes[2].to_i64() {
-            Some(x) => x as u64,
-            None => return Err(RoliError::MalformedResponse),
-        };
+        let item_id = codes[2].to_i64()? as u64;
 
         match is_price_update {
             true => {
-                let price = match codes[4].to_i64() {
-                    Some(x) => x as u64,
-                    None => return Err(RoliError::MalformedResponse),
-                };
+                let price = codes[4].to_i64()? as u64;
 
                 Ok(Activity::PriceUpdate(PriceUpdate {
                     timestamp,
@@ -97,10 +85,7 @@ impl Activity {
                 }))
             }
             false => {
-                let rap = match codes[4].to_i64() {
-                    Some(x) => x as u64,
-                    None => return Err(RoliError::MalformedResponse),
-                };
+                let rap = codes[4].to_i64()? as u64;
 
                 Ok(Activity::RapUpdate(RapUpdate {
                     timestamp,
@@ -165,5 +150,125 @@ impl Client {
             // todo finish this
             Err(e) => todo!(),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_valid_price_update() {
+        let codes = vec![
+            Code::Integer(1678939600),
+            Code::Integer(0),
+            Code::String(String::from("3016210752")),
+            Code::Integer(0),
+            Code::Integer(108),
+        ];
+
+        let activity = Activity::PriceUpdate(PriceUpdate {
+            timestamp: 1678939600,
+            item_id: 3016210752,
+            price: 108,
+        });
+
+        assert_eq!(Activity::from_raw(codes).unwrap(), activity);
+    }
+
+    #[test]
+    fn test_valid_rap_update() {
+        let codes = vec![
+            Code::Integer(1678939605),
+            Code::Integer(1),
+            Code::String(String::from("3016210752")),
+            Code::Integer(0),
+            Code::Integer(92),
+        ];
+
+        let activity = Activity::RapUpdate(RapUpdate {
+            timestamp: 1678939605,
+            item_id: 3016210752,
+            rap: 92,
+        });
+
+        assert_eq!(Activity::from_raw(codes).unwrap(), activity);
+    }
+
+    #[test]
+    fn test_invalid_codes_length() {
+        let codes = vec![
+            Code::Integer(1678939600),
+            Code::Integer(0),
+            Code::String(String::from("3016210752")),
+            Code::Integer(0),
+        ];
+
+        assert!(Activity::from_raw(codes).is_err());
+    }
+
+    #[test]
+    fn test_invalid_is_price_update() {
+        let codes = vec![
+            Code::Integer(1678939600),
+            Code::String(String::from("invalid")),
+            Code::String(String::from("3016210752")),
+            Code::Integer(0),
+            Code::Integer(108),
+        ];
+
+        assert!(Activity::from_raw(codes).is_err());
+    }
+
+    #[test]
+    fn test_invalid_timestamp() {
+        let codes = vec![
+            Code::String(String::from("invalid")),
+            Code::Integer(0),
+            Code::String(String::from("3016210752")),
+            Code::Integer(0),
+            Code::Integer(108),
+        ];
+
+        assert!(Activity::from_raw(codes).is_err());
+    }
+
+    #[test]
+    fn test_invalid_item_id() {
+        let codes = vec![
+            Code::Integer(1678939600),
+            Code::Integer(0),
+            Code::String(String::from("invalid")),
+            Code::Integer(0),
+            Code::Integer(108),
+        ];
+
+        assert!(Activity::from_raw(codes).is_err());
+    }
+
+    #[test]
+    fn test_invalid_price() {
+        let codes = vec![
+            Code::Integer(1678939600),
+            Code::Integer(0),
+            Code::String(String::from("3016210752")),
+            Code::Integer(0),
+            Code::String(String::from("invalid")),
+        ];
+
+        assert!(Activity::from_raw(codes).is_err());
+    }
+
+    #[test]
+    fn test_invalid_rap() {
+        let codes = vec![
+            Code::Integer(1678939605),
+            Code::Integer(1),
+            Code::String(String::from("3016210752")),
+            Code::Integer(0),
+            Code::String(String::from("invalid")),
+        ];
+
+        assert!(Activity::from_raw(codes).is_err());
     }
 }

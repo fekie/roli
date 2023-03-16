@@ -90,11 +90,12 @@ pub(crate) enum Code {
 
 impl Code {
     // todo: make this return a normal rolierror when we make it
-    /// Returns an i64 inside an option, if the `Option` is `None`, there was a parsing error.
-    fn to_i64(&self) -> Option<i64> {
+    /// Returns an i64 inside if the operation was successful, otherwise returns a [`RoliError::MalformedResponse`]
+    /// (as [`Code`] is only used to parse responses).
+    fn to_i64(&self) -> Result<i64, RoliError> {
         match self {
-            Self::Integer(x) => Some(*x),
-            Self::String(x) => x.parse().ok(),
+            Self::Integer(x) => Ok(*x),
+            Self::String(x) => x.parse().map_err(|e| RoliError::MalformedResponse),
         }
     }
 }

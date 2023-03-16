@@ -75,56 +75,47 @@ impl ItemDetails {
 
         // For these lines below, we return a ItemsError::MalformedResponse if we cannot parse
         // the value to an i64.
-        let rap = match codes[2].to_i64() {
-            Some(x) => x as u64,
-            None => return Err(RoliError::MalformedResponse),
-        };
+        let rap = codes[2].to_i64()? as u64;
 
-        let valued = match codes[3].to_i64() {
-            Some(x) => x != -1,
-            None => return Err(RoliError::MalformedResponse),
-        };
+        let valued = codes[3].to_i64()? != -1;
 
-        let value = match codes[4].to_i64() {
-            Some(x) => x as u64,
-            None => return Err(RoliError::MalformedResponse),
-        };
+        let value = codes[4].to_i64()? as u64;
 
-        let demand = match codes[5].to_i64() {
-            Some(-1) => Demand::Unassigned,
-            Some(0) => Demand::Terrible,
-            Some(1) => Demand::Low,
-            Some(2) => Demand::Normal,
-            Some(3) => Demand::High,
-            Some(4) => Demand::Amazing,
+        let demand = match codes[5].to_i64()? {
+            -1 => Demand::Unassigned,
+            0 => Demand::Terrible,
+            1 => Demand::Low,
+            2 => Demand::Normal,
+            3 => Demand::High,
+            4 => Demand::Amazing,
             _ => return Err(RoliError::MalformedResponse),
         };
 
-        let trend = match codes[6].to_i64() {
-            Some(-1) => Trend::Unassigned,
-            Some(0) => Trend::Lowering,
-            Some(1) => Trend::Unstable,
-            Some(2) => Trend::Stable,
-            Some(3) => Trend::Raising,
-            Some(4) => Trend::Fluctuating,
+        let trend = match codes[6].to_i64()? {
+            -1 => Trend::Unassigned,
+            0 => Trend::Lowering,
+            1 => Trend::Unstable,
+            2 => Trend::Stable,
+            3 => Trend::Raising,
+            4 => Trend::Fluctuating,
             _ => return Err(RoliError::MalformedResponse),
         };
 
-        let projected = match codes[7].to_i64() {
-            Some(1) => true,
-            Some(-1) => false,
+        let projected = match codes[7].to_i64()? {
+            1 => true,
+            -1 => false,
             _ => return Err(RoliError::MalformedResponse),
         };
 
-        let hyped = match codes[8].to_i64() {
-            Some(1) => true,
-            Some(-1) => false,
+        let hyped = match codes[8].to_i64()? {
+            1 => true,
+            -1 => false,
             _ => return Err(RoliError::MalformedResponse),
         };
 
-        let rare = match codes[9].to_i64() {
-            Some(1) => true,
-            Some(-1) => false,
+        let rare = match codes[9].to_i64()? {
+            1 => true,
+            -1 => false,
             _ => return Err(RoliError::MalformedResponse),
         };
 
@@ -206,11 +197,11 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_item_details_from_raw() {
-        // Test a valid code vector for an item
+    fn test_from_raw_valid_data() {
+        let item_id = 123;
         let codes = vec![
-            Code::String("item1".to_string()),
-            Code::String("".to_string()),
+            Code::String("Test item name".to_string()),
+            Code::String("TI".to_string()),
             Code::Integer(100),
             Code::Integer(1),
             Code::Integer(200),
@@ -221,11 +212,15 @@ mod tests {
             Code::Integer(1),
         ];
 
-        let item_details = ItemDetails::from_raw(123, codes).unwrap();
+        let result = ItemDetails::from_raw(item_id, codes);
 
-        assert_eq!(item_details.item_id, 123);
-        assert_eq!(item_details.item_name, "item1".to_string());
-        assert_eq!(item_details.acronym, None);
+        assert!(result.is_ok());
+
+        let item_details = result.unwrap();
+
+        assert_eq!(item_details.item_id, item_id);
+        assert_eq!(item_details.item_name, "Test item name");
+        assert_eq!(item_details.acronym, Some("TI".to_string()));
         assert_eq!(item_details.rap, 100);
         assert!(item_details.valued);
         assert_eq!(item_details.value, 200);
@@ -234,5 +229,26 @@ mod tests {
         assert!(item_details.projected);
         assert!(item_details.hyped);
         assert!(item_details.rare);
+    }
+
+    #[test]
+    fn test_from_raw_invalid_data() {
+        let item_id = 123;
+        let codes = vec![
+            Code::String("Test item name".to_string()),
+            Code::String("TI".to_string()),
+            Code::String("Invalid".to_string()),
+            Code::Integer(-1),
+            Code::Integer(200),
+            Code::Integer(3),
+            Code::Integer(4),
+            Code::Integer(1),
+            Code::Integer(1),
+            Code::Integer(1),
+        ];
+
+        let result = ItemDetails::from_raw(item_id, codes);
+
+        assert!(result.is_err());
     }
 }
