@@ -5,7 +5,7 @@
 //! using the api endpoints responsibly, the user is expected to maintain
 //! their own caching.
 //!
-//! All endpoints are accessed from a [`Client`]
+//! All endpoints are accessed from a [`Client`].
 //!
 //! # API Coverage Checklist
 //! - [x] Items API
