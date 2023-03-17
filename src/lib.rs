@@ -26,13 +26,15 @@
 //! }
 //! ```
 
+// todo: add nested list for api coverage list that includes which functions do what
+
 #![warn(missing_docs)]
 
 use serde::{Deserialize, Serialize};
 
 /// A module that contains all the endpoints associated with the deals page.
 pub mod deals;
-/// A move that contains all the endpoints associated with getting item details.
+/// A module that contains all the endpoints associated with getting item details.
 pub mod items;
 
 // Re-export reqwest so people can use the correct version.
@@ -77,7 +79,7 @@ pub(crate) enum Code {
     String(String),
 }
 
-/// Used to interact with the rest of the rolimons api wrapper.
+/// Used to interact with the rest of the Rolimon's api wrapper.
 ///
 /// Contains any necessary authentication and the reqwest client. All
 /// [`Client`] methods make exactly one api call.
