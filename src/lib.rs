@@ -9,7 +9,9 @@
 //!
 //! # API Coverage Checklist
 //! - [x] Items API
+//!     - [`Client::deals_activity`]
 //! - [x] Deals API
+//!     - [`Client::all_item_details`]
 //! - [ ] Trade Ad API
 //!
 //! # Quick Start
@@ -25,8 +27,6 @@
 //!     println!("Item Amount: {}", all_item_details.len());
 //! }
 //! ```
-
-// todo: add nested list for api coverage list that includes which functions do what
 
 #![warn(missing_docs)]
 
