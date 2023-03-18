@@ -79,7 +79,7 @@ pub(crate) enum Code {
     String(String),
 }
 
-/// Used to interact with the rest of the Rolimon's api wrapper.
+/// Used to interact with the rest of the Rolimons.com api wrapper.
 ///
 /// Contains any necessary authentication and the reqwest client. All
 /// [`Client`] methods make exactly one api call.
