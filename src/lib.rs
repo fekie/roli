@@ -9,7 +9,9 @@
 //!
 //! # API Coverage Checklist
 //! - [x] Items API
+//!     - [`Client::deals_activity`]
 //! - [x] Deals API
+//!     - [`Client::all_item_details`]
 //! - [ ] Trade Ad API
 //!
 //! # Quick Start
@@ -25,8 +27,6 @@
 //!     println!("Item Amount: {}", all_item_details.len());
 //! }
 //! ```
-
-// todo: add nested list for api coverage list that includes which functions do what
 
 #![warn(missing_docs)]
 
@@ -79,7 +79,7 @@ pub(crate) enum Code {
     String(String),
 }
 
-/// Used to interact with the rest of the Rolimon's api wrapper.
+/// Used to interact with the rest of the Rolimons.com api wrapper.
 ///
 /// Contains any necessary authentication and the reqwest client. All
 /// [`Client`] methods make exactly one api call.
@@ -163,7 +163,7 @@ impl ClientBuilder {
     /// let client = builder.set_roli_verification("apikey".to_string()).build();
     /// assert!(client.contains_roli_verification())
     /// ```
-    pub fn set_roli_verification(mut self, roli_verification: String) -> Self {
+    pub fn roli_verification(mut self, roli_verification: String) -> Self {
         self.roli_verification = Some(roli_verification);
         self
     }
@@ -178,7 +178,7 @@ impl ClientBuilder {
     /// let reqwest_client = reqwest::Client::new();
     /// let client = builder.set_reqwest_client(reqwest_client).build();
     /// ```
-    pub fn set_reqwest_client(mut self, reqwest_client: reqwest::Client) -> Self {
+    pub fn reqwest_client(mut self, reqwest_client: reqwest::Client) -> Self {
         self.reqwest_client = Some(reqwest_client);
         self
     }
