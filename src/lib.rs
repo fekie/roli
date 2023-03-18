@@ -163,7 +163,7 @@ impl ClientBuilder {
     /// let client = builder.set_roli_verification("apikey".to_string()).build();
     /// assert!(client.contains_roli_verification())
     /// ```
-    pub fn set_roli_verification(mut self, roli_verification: String) -> Self {
+    pub fn roli_verification(mut self, roli_verification: String) -> Self {
         self.roli_verification = Some(roli_verification);
         self
     }
@@ -178,7 +178,7 @@ impl ClientBuilder {
     /// let reqwest_client = reqwest::Client::new();
     /// let client = builder.set_reqwest_client(reqwest_client).build();
     /// ```
-    pub fn set_reqwest_client(mut self, reqwest_client: reqwest::Client) -> Self {
+    pub fn reqwest_client(mut self, reqwest_client: reqwest::Client) -> Self {
         self.reqwest_client = Some(reqwest_client);
         self
     }
