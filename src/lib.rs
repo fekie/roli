@@ -127,6 +127,19 @@ impl Client {
         Self::default()
     }
 
+    /// Constructs a new [`Client`] with a roli verification token.
+    pub fn with_roli_verification(roli_verification: String) -> Self {
+        Self {
+            roli_verification: Some(roli_verification),
+            ..Default::default()
+        }
+    }
+
+    /// Sets the value for the optional `roli_verification` field.
+    pub fn set_roli_verification(&mut self, roli_verification: String) {
+        self.roli_verification = Some(roli_verification);
+    }
+
     /// Returns whether the client has `self.roliverification`
     /// set to `Some(_)`. Does not check to see if the token is valid.
     pub fn contains_roli_verification(&self) -> bool {
