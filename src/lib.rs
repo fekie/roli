@@ -36,8 +36,6 @@ use serde::{Deserialize, Serialize};
 pub mod deals;
 /// A module that contains all the endpoints associated with getting item details.
 pub mod items;
-/// A module that contains all the endpoints associated with the trade ads page.
-pub mod trade_ads;
 
 // Re-export reqwest so people can use the correct version.
 pub use reqwest;
@@ -61,18 +59,6 @@ pub enum RoliError {
     /// Used when the response from an API endpoint is malformed.
     #[error("Malformed Response")]
     MalformedResponse,
-    /// Used when roli_verification contains ASCII characters outside of the range 32-127.
-    #[error("Roli Verification Contains Invalid Characters")]
-    RoliVerificationContainsInvalidCharacters,
-    /// Used when roli_verification is invalid or expired.
-    #[error("Roli Verification Invalid Or Expired")]
-    RoliVerificationInvalidOrExpired,
-    /// Used when roli_verification is not set.
-    #[error("Roli Verification Not Set")]
-    RoliVerificationNotSet,
-    /// Used when a cooldown for something, such as making a trade ad, has not expired.
-    #[error("Cooldown Not Expired")]
-    CooldownNotExpired,
     /// Used for any status codes that do not fit any enum variants of this error.
     /// If you encounter this enum variant, please submit an issue so a variant can be
     /// made or the crate can be fixed.
@@ -141,19 +127,6 @@ impl Client {
         Self::default()
     }
 
-    /// Constructs a new [`Client`] with a roli verification token.
-    pub fn with_roli_verification(roli_verification: String) -> Self {
-        Self {
-            roli_verification: Some(roli_verification),
-            ..Default::default()
-        }
-    }
-
-    /// Sets the value for the optional `roli_verification` field.
-    pub fn set_roli_verification(&mut self, roli_verification: String) {
-        self.roli_verification = Some(roli_verification);
-    }
-
     /// Returns whether the client has `self.roliverification`
     /// set to `Some(_)`. Does not check to see if the token is valid.
     pub fn contains_roli_verification(&self) -> bool {
@@ -190,7 +163,7 @@ impl ClientBuilder {
     /// let client = builder.set_roli_verification("apikey".to_string()).build();
     /// assert!(client.contains_roli_verification())
     /// ```
-    pub fn set_roli_verification(mut self, roli_verification: String) -> Self {
+    pub fn roli_verification(mut self, roli_verification: String) -> Self {
         self.roli_verification = Some(roli_verification);
         self
     }
@@ -205,7 +178,7 @@ impl ClientBuilder {
     /// let reqwest_client = reqwest::Client::new();
     /// let client = builder.set_reqwest_client(reqwest_client).build();
     /// ```
-    pub fn set_reqwest_client(mut self, reqwest_client: reqwest::Client) -> Self {
+    pub fn reqwest_client(mut self, reqwest_client: reqwest::Client) -> Self {
         self.reqwest_client = Some(reqwest_client);
         self
     }
