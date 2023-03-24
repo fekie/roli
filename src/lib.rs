@@ -12,7 +12,8 @@
 //!     - [`Client::deals_activity`]
 //! - [x] Deals API
 //!     - [`Client::all_item_details`]
-//! - [ ] Trade Ad API
+//! - [x] Trade Ad API (Partial)
+//!    - [`Client::create_trade_ad`]
 //!
 //! # Quick Start
 //!
