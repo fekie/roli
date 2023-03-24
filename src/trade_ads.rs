@@ -26,7 +26,7 @@ pub enum RequestTag {
     Adds,
 }
 
-/// Used to serialize directly to the JSON body of the request.
+/// Used to specify details of the trade one wants to post.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CreateTradeAdParams {
     /// The player id of the user making the trade ad.
