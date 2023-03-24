@@ -36,6 +36,8 @@ use serde::{Deserialize, Serialize};
 pub mod deals;
 /// A module that contains all the endpoints associated with getting item details.
 pub mod items;
+/// A module that contains all the endpoints associated with the trade ads page.
+pub mod trade_ads;
 
 // Re-export reqwest so people can use the correct version.
 pub use reqwest;
@@ -59,6 +61,18 @@ pub enum RoliError {
     /// Used when the response from an API endpoint is malformed.
     #[error("Malformed Response")]
     MalformedResponse,
+    /// Used when roli_verification contains ASCII characters outside of the range 32-127.
+    #[error("Roli Verification Contains Invalid Characters")]
+    RoliVerificationContainsInvalidCharacters,
+    /// Used when roli_verification is invalid or expired.
+    #[error("Roli Verification Invalid Or Expired")]
+    RoliVerificationInvalidOrExpired,
+    /// Used when roli_verification is not set.
+    #[error("Roli Verification Not Set")]
+    RoliVerificationNotSet,
+    /// Used when a cooldown for something, such as making a trade ad, has not expired.
+    #[error("Cooldown Not Expired")]
+    CooldownNotExpired,
     /// Used for any status codes that do not fit any enum variants of this error.
     /// If you encounter this enum variant, please submit an issue so a variant can be
     /// made or the crate can be fixed.
