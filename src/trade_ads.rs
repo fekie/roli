@@ -27,7 +27,7 @@ pub enum RequestTag {
 }
 
 /// Used to specify details of the trade one wants to post.
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Clone, Default)]
 pub struct CreateTradeAdParams {
     /// The player id of the user making the trade ad.
     /// This is the same as the user id on Roblox.
