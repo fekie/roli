@@ -45,6 +45,29 @@ impl Client {
     ///
     /// Note that the current ad limit is 55 per 24 hours, and the
     /// cooldown is 15 minutes.
+    ///
+    /// # Example
+    /// ```no_run
+    /// # use std::error::Error;
+    /// use roli::trade_ads;
+    ///
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn Error>> {
+    /// let client = roli::Client::with_roli_verification("xxx".to_string());
+    ///
+    /// let request_tag = trade_ads::RequestTag::Any;
+    ///
+    /// let create_trade_ad_params = trade_ads::CreateTradeAdParams {
+    ///     player_id: 123456789,
+    ///     offer_item_ids: vec![6803423284, 7212273948],
+    ///     request_item_ids: vec![259425946],
+    ///     request_tags: vec![request_tag],
+    /// };
+    ///
+    /// client.create_trade_ad(create_trade_ad_params).await?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub async fn create_trade_ad(
         &self,
         create_trade_ad_params: CreateTradeAdParams,
