@@ -21,11 +21,14 @@
 //! on Rolimon's, which includes information you would see on an item's page.
 //!
 //! ```no_run
+//! # use std::error::Error;
+//!
 //! #[tokio::main]
-//! async fn main() {
+//! async fn main() -> Result<(), Box<dyn Error>> {
 //!     let client = roli::ClientBuilder::new().build();
-//!     let all_item_details = client.all_item_details().await.unwrap();
+//!     let all_item_details = client.all_item_details().await?;
 //!     println!("Item Amount: {}", all_item_details.len());
+//!     Ok(())   
 //! }
 //! ```
 
