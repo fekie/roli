@@ -33,11 +33,13 @@
 
 use serde::{Deserialize, Serialize};
 
-/// A module that contains all the endpoints associated with the deals page.
+/// Contains all the endpoints associated with the deals page.
 pub mod deals;
-/// A module that contains all the endpoints associated with getting item details.
+/// Contains all the endpoints associated with getting item details.
 pub mod items;
-/// A module that contains all the endpoints associated with the trade ads page.
+/// Contains all the endpoints associated with players.
+pub mod players;
+/// Contains all the endpoints associated with the trade ads page.
 pub mod trade_ads;
 
 // Re-export reqwest so people can use the correct version.
