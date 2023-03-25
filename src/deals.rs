@@ -110,7 +110,6 @@ impl Activity {
 }
 
 impl Client {
-    // TODO: write example
     /// A wrapper for <https://www.rolimons.com/api/activity2>.
     ///
     /// Does not require authentication.
@@ -120,6 +119,19 @@ impl Client {
     /// a [`PriceUpdate`] or [`RapUpdate`].
     ///
     /// On the Rolimon's deal's page, this api is polled roughly every 3 seconds.
+    ///
+    /// # Example
+    /// ```no_run
+    /// # use std::error::Error;
+    /// #
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn Error>> {
+    /// let client = roli::ClientBuilder::new().build();
+    /// let activites = client.deals_activity().await.unwrap();
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
     pub async fn deals_activity(&self) -> Result<Vec<Activity>, RoliError> {
         let request_result = self
             .reqwest_client
