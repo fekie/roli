@@ -50,7 +50,7 @@ struct DealsActivityResponse {
 
 impl Activity {
     /// Converts a vector of Code into an Activity object representing a Roblox item activity, which is
-    /// either a [`Deal`] or a [`RapUpdate`]
+    /// either a [`PriceUpdate`] or a [`RapUpdate`].
     fn from_raw(codes: Vec<Code>) -> Result<Self, RoliError> {
         if codes.len() != 5 {
             return Err(RoliError::MalformedResponse);
