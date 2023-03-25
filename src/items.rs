@@ -170,10 +170,26 @@ impl AllItemDetailsResponse {
 }
 
 impl Client {
-    // TODO: write example
     /// A wrapper for <https://www.rolimons.com/itemapi/itemdetails>.
     ///
     /// Does not require authentication.
+    ///
+    /// # Warning
+    /// Although the ratelimit is 10 requests per minute, the owner will ban people who continually abuse this api.
+    /// The data this endpoint is serving is cached on the server for 60 seconds, so there is no point in spamming it anyways.
+    ///
+    /// # Example
+    /// ```no_run
+    /// # use std::error::Error;
+    /// #
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn Error>> {
+    /// let client = roli::ClientBuilder::new().build();
+    /// let all_item_details = client.all_item_details().await.unwrap();
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
     pub async fn all_item_details(&self) -> Result<Vec<ItemDetails>, RoliError> {
         let request_result = self
             .reqwest_client

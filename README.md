@@ -9,7 +9,11 @@ A low level api wrapper for Rolimons.com.
 # API Coverage Checklist
 - [x] Items API
 - [x] Deals API
-- [x] Trade Ad API (Partial)
+- [x] Trade Ad API
+- [x] Player API (Partial)
+- [ ] Game API
+- [ ] Market Activity API
+- [ ] Groups API
 
 # Contributing
 Pull requests are welcome!

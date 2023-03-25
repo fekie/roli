@@ -12,8 +12,13 @@
 //!     - [`Client::deals_activity`]
 //! - [x] Deals API
 //!     - [`Client::all_item_details`]
-//! - [x] Trade Ad API (Partial)
+//! - [x] Trade Ad API
 //!    - [`Client::create_trade_ad`]
+//! - [x] Player API (Partial)
+//!    - [`Client::player_search`]
+//! - [ ] Game API
+//! - [ ] Market Activity API
+//! - [ ] Groups API
 //!
 //! # Quick Start
 //!
@@ -21,11 +26,14 @@
 //! on Rolimon's, which includes information you would see on an item's page.
 //!
 //! ```no_run
+//! # use std::error::Error;
+//!
 //! #[tokio::main]
-//! async fn main() {
+//! async fn main() -> Result<(), Box<dyn Error>> {
 //!     let client = roli::ClientBuilder::new().build();
-//!     let all_item_details = client.all_item_details().await.unwrap();
+//!     let all_item_details = client.all_item_details().await?;
 //!     println!("Item Amount: {}", all_item_details.len());
+//!     Ok(())   
 //! }
 //! ```
 
@@ -33,11 +41,13 @@
 
 use serde::{Deserialize, Serialize};
 
-/// A module that contains all the endpoints associated with the deals page.
+/// Contains all the endpoints associated with the deals page.
 pub mod deals;
-/// A module that contains all the endpoints associated with getting item details.
+/// Contains all the endpoints associated with getting item details.
 pub mod items;
-/// A module that contains all the endpoints associated with the trade ads page.
+/// Contains all the endpoints associated with players.
+pub mod players;
+/// Contains all the endpoints associated with the trade ads page.
 pub mod trade_ads;
 
 // Re-export reqwest so people can use the correct version.
@@ -87,7 +97,7 @@ pub enum RoliError {
 /// Used for holding either an integer or a string in [`AllItemDetailsResponse`].
 /// This is necessary as (for some reason) numbers are represented as strings
 /// in the api response.
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 #[serde(untagged)]
 pub(crate) enum Code {
     Integer(i64),
