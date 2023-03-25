@@ -92,7 +92,7 @@ pub enum RoliError {
 /// Used for holding either an integer or a string in [`AllItemDetailsResponse`].
 /// This is necessary as (for some reason) numbers are represented as strings
 /// in the api response.
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 #[serde(untagged)]
 pub(crate) enum Code {
     Integer(i64),
