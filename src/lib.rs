@@ -12,8 +12,13 @@
 //!     - [`Client::deals_activity`]
 //! - [x] Deals API
 //!     - [`Client::all_item_details`]
-//! - [x] Trade Ad API (Partial)
+//! - [x] Trade Ad API
 //!    - [`Client::create_trade_ad`]
+//! - [x] Player API (Partial)
+//!    - [`Client::player_search`]
+//! - [ ] Game API
+//! - [ ] Market Activity API
+//! - [ ] Groups API
 //!
 //! # Quick Start
 //!
