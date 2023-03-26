@@ -1,8 +1,10 @@
 use crate::{Client, Code, RoliError};
 use reqwest::header;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 const PLAYER_SEARCH_API: &str = "https://www.rolimons.com/api/playersearch";
+const PLAYER_API: &str = "https://www.rolimons.com/api/playerassets/";
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 struct PlayerSearchResponse {
@@ -20,6 +22,96 @@ pub struct PlayerSearchResult {
     username: String,
 }
 
+#[derive(Clone, Debug, Serialize, Deserialize)]
+struct PlayerProfileResponse {
+    success: bool,
+    #[serde(rename = "playerTerminated")]
+    player_terminated: bool,
+    #[serde(rename = "playerPrivacyEnabled")]
+    player_privacy_enabled: bool,
+    #[serde(rename = "playerVerified")]
+    player_verified: bool,
+    #[serde(rename = "playerId")]
+    player_id: u64,
+    #[serde(rename = "chartNominalScanTime")]
+    chart_nominal_scan_time: u64,
+    #[serde(rename = "playerAssets")]
+    player_assets: HashMap<String, Vec<u64>>,
+    #[serde(rename = "isOnline")]
+    is_online: bool,
+    #[serde(rename = "presenceType")]
+    presence_type: u8,
+    #[serde(rename = "lastOnline")]
+    last_online: u64,
+    #[serde(rename = "lastLocation")]
+    last_location: String,
+    #[serde(rename = "lastPlaceId")]
+    last_place_id: Option<u64>,
+    #[serde(rename = "locationGameIsTracked")]
+    location_game_is_tracked: bool,
+    #[serde(rename = "locationGameIconUrl")]
+    location_game_icon_url: Option<String>,
+    premium: bool,
+    badges: HashMap<String, u64>,
+}
+
+/// Represents a player's inventory.
+///
+/// Some fields are not included as they appear to be broken/unused
+/// (which means their meanings are unknown).
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct PlayerProfile {
+    /// The user id of the player.
+    pub user_id: u64,
+    /// Whether the player is terminated.
+    pub terminated: bool,
+    /// Whether the player has their inventory privated.
+    pub privated: bool,
+    /// Whether the player is currently online.
+    pub is_online: bool,
+    /// The unix timestamp of the player's last online status.
+    pub last_online: u64,
+    /// Whether the player has premium
+    pub premium: bool,
+    /// The type of presence the player has (e.g. Unavailable, Website, InGame).
+    pub presence_type: PresenceType,
+    /// The player's badges and the unix timestamp of when they were earned.
+    pub badges: Vec<Badge>,
+    /// The player's inventory. Each player asset includes item ids, as well as uaids owned.
+    pub inventory: Vec<PlayerAsset>,
+}
+
+/// Represents a Rolimon's badge.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+pub struct Badge {
+    /// The name of the badge.
+    pub name: String,
+    /// The unix timestamp of when the badge was earned.
+    pub timestamp_earned: u64,
+}
+
+/// The type of presence the player has on Roblox (e.g. InGame, Website).
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+pub enum PresenceType {
+    /// Rolimon's is unable to find the player's presence type.
+    Unavailable,
+    /// The player is on the Roblox website.
+    Website,
+    /// The player is in a game.
+    InGame,
+    /// The player is in studio.
+    InStudio,
+}
+
+/// Contains the item id and the uaids (unique asset ids) of all the copies the user owns.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Serialize, Deserialize)]
+pub struct PlayerAsset {
+    /// The item id of the asset.
+    pub item_id: u64,
+    /// The unique asset ids of all the copies the user owns.
+    pub uaids: Vec<u64>,
+}
+
 impl PlayerSearchResult {
     /// Converts a vector of [`Code`] into a [`PlayerSearchResult`].
     ///
@@ -33,6 +125,18 @@ impl PlayerSearchResult {
         let username = codes[1].to_string();
 
         Ok(Self { user_id, username })
+    }
+}
+
+impl PresenceType {
+    fn from_u8(value: u8) -> Self {
+        match value {
+            0 => Self::Unavailable,
+            1 => Self::Website,
+            2 => Self::InGame,
+            3 => Self::InStudio,
+            _ => Self::Unavailable,
+        }
     }
 }
 
@@ -84,6 +188,92 @@ impl Client {
                         }
 
                         Ok(search_outputs)
+                    }
+                    429 => Err(RoliError::TooManyRequests),
+                    500 => Err(RoliError::InternalServerError),
+                    _ => Err(RoliError::UnidentifiedStatusCode(status_code)),
+                }
+            }
+            Err(e) => Err(RoliError::ReqwestError(e)),
+        }
+    }
+
+    /// Gets a player's Rolimon's profile. Contains their Roblox inventory, Rolimon's badges, Roblox online status,
+    /// Roblox termination status, and Roblox privacy status.
+    ///
+    /// # Warning
+    ///
+    /// Heavy use of this endpoint is highly discouraged by the owner of Rolimon's. This endpoint is
+    /// very intensive on their servers and they ask that you only use it when necessary. The Roblox API is
+    /// much more efficient and should be used instead when possible.
+    ///
+    /// # Example
+    /// ```no_run
+    /// # use std::error::Error;
+    /// #
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn Error>> {
+    /// let client = roli::ClientBuilder::new().build();
+    /// let player = client.player_profile(2207291).await?;
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub async fn player_profile(&self, user_id: u64) -> Result<PlayerProfile, RoliError> {
+        let formatted_url = format!("{}{}", PLAYER_API, user_id);
+
+        let request_result = self
+            .reqwest_client
+            .get(formatted_url)
+            .header(header::USER_AGENT, crate::USER_AGENT)
+            .send()
+            .await;
+
+        match request_result {
+            Ok(response) => {
+                let status_code = response.status().as_u16();
+
+                match status_code {
+                    200 => {
+                        let raw = match response.json::<PlayerProfileResponse>().await {
+                            Ok(x) => x,
+                            Err(_) => return Err(RoliError::MalformedResponse),
+                        };
+
+                        let mut badges = Vec::new();
+
+                        for (name, timestamp) in raw.badges {
+                            badges.push(Badge {
+                                name,
+                                timestamp_earned: timestamp,
+                            });
+                        }
+
+                        let mut inventory = Vec::new();
+
+                        for (item_id, uaids) in raw.player_assets {
+                            let item_id_u64 = match item_id.parse::<u64>() {
+                                Ok(x) => x,
+                                Err(_) => return Err(RoliError::MalformedResponse),
+                            };
+
+                            inventory.push(PlayerAsset {
+                                item_id: item_id_u64,
+                                uaids,
+                            });
+                        }
+
+                        Ok(PlayerProfile {
+                            user_id: raw.player_id,
+                            terminated: raw.player_terminated,
+                            privated: raw.player_privacy_enabled,
+                            inventory,
+                            is_online: raw.is_online,
+                            presence_type: PresenceType::from_u8(raw.presence_type),
+                            last_online: raw.last_online,
+                            premium: raw.premium,
+                            badges,
+                        })
                     }
                     429 => Err(RoliError::TooManyRequests),
                     500 => Err(RoliError::InternalServerError),
