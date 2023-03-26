@@ -58,7 +58,6 @@ impl Client {
         username: &str,
     ) -> Result<Vec<PlayerSearchResult>, RoliError> {
         let formatted_url = format!("{}?searchstring={}", PLAYER_SEARCH_API, username);
-        dbg!(formatted_url.clone());
 
         let request_result = self
             .reqwest_client
