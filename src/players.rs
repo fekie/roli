@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 const PLAYER_SEARCH_API: &str = "https://www.rolimons.com/api/playersearch";
 
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 struct PlayerSearchResponse {
     success: bool,
     result_count: i64,
