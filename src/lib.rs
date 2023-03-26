@@ -14,7 +14,7 @@
 //!     - [`Client::all_item_details`]
 //! - [x] Trade Ad API
 //!    - [`Client::create_trade_ad`]
-//! - [x] Player API (Partial)
+//! - [x] Player API
 //!    - [`Client::player_search`]
 //!    - [`Client::player_profile`]
 //! - [ ] Game API
