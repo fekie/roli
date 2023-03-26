@@ -16,6 +16,7 @@
 //!    - [`Client::create_trade_ad`]
 //! - [x] Player API (Partial)
 //!    - [`Client::player_search`]
+//!    - [`Client::player_profile`]
 //! - [ ] Game API
 //! - [ ] Market Activity API
 //! - [ ] Groups API

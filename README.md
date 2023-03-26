@@ -10,7 +10,7 @@ A low level api wrapper for Rolimons.com.
 - [x] Items API
 - [x] Deals API
 - [x] Trade Ad API
-- [x] Player API (Partial)
+- [x] Player API
 - [ ] Game API
 - [ ] Market Activity API
 - [ ] Groups API
