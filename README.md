@@ -12,8 +12,8 @@ A low level api wrapper for Rolimons.com.
 - [x] Trade Ad API
 - [x] Player API
 - [x] Game API
+- [x] Groups API
 - [ ] Market Activity API
-- [ ] Groups API
 
 # Contributing
 Pull requests are welcome!
