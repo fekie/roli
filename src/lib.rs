@@ -18,8 +18,8 @@
 //!    - [`Client::player_search`]
 //!    - [`Client::player_profile`]
 //! - [x] Game API
+//! - [x] Groups API
 //! - [ ] Market Activity API
-//! - [ ] Groups API
 //!
 //! # Quick Start
 //!
