@@ -47,7 +47,7 @@ impl Client {
     /// # #[tokio::main]
     /// # async fn main() -> Result<(), Box<dyn Error>> {
     /// let client = roli::ClientBuilder::new().build();
-    /// let games_list = client.game_list().await?;
+    /// let games_list = client.games_list().await?;
     /// #
     /// # Ok(())
     /// # }
