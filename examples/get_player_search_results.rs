@@ -6,7 +6,7 @@ async fn main() {
     let search_results = client.player_search(USERNAME).await.unwrap();
 
     println!(
-        "Search Result Count For {}: {}",
+        "Player Search Result Count For {}: {}",
         USERNAME,
         search_results.len()
     );
