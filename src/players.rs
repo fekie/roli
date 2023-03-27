@@ -147,6 +147,9 @@ impl Client {
     ///
     /// Returns a list of players on success.
     ///
+    /// Player name needn't match exactly as the endpoint
+    /// will offer multiple possible name matches.
+    ///
     /// # Example
     /// ```no_run
     /// # use std::error::Error;
