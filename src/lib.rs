@@ -17,7 +17,7 @@
 //! - [x] Player API
 //!    - [`Client::player_search`]
 //!    - [`Client::player_profile`]
-//! - [ ] Game API
+//! - [x] Game API
 //! - [ ] Market Activity API
 //! - [ ] Groups API
 //!
