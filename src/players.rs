@@ -18,8 +18,10 @@ struct PlayerSearchResponse {
 /// This does not contain all information about a player, just enough to identify them.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Serialize, Deserialize)]
 pub struct PlayerSearchResult {
-    user_id: u64,
-    username: String,
+    /// The Roblox id of the player.
+    pub user_id: u64,
+    /// The username of the player.
+    pub username: String,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
