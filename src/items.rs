@@ -185,7 +185,7 @@ impl Client {
     /// # #[tokio::main]
     /// # async fn main() -> Result<(), Box<dyn Error>> {
     /// let client = roli::ClientBuilder::new().build();
-    /// let all_item_details = client.all_item_details().await.unwrap();
+    /// let all_item_details = client.all_item_details().await?;
     /// #
     /// # Ok(())
     /// # }
