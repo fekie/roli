@@ -18,7 +18,9 @@
 //!    - [`Client::player_search`]
 //!    - [`Client::player_profile`]
 //! - [x] Game API
+//!    - [`Client::games_list`]
 //! - [x] Groups API
+//!    - [`Client::group_search`]
 //! - [ ] Market Activity API
 //!
 //! # Quick Start
