@@ -1,6 +1,7 @@
 use std::error::Error;
 
 const USER_ID: u64 = 2207291;
+const USERNAME: &str = "Linkmon99";
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -13,7 +14,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .map(|x| x.uaids.len())
         .sum::<usize>() as u64;
 
-    println!("Item Count (Including Multiples): {}", item_count);
+    println!(
+        "Item Count of {} (Including Multiples): {}",
+        USERNAME, item_count
+    );
 
     Ok(())
 }
