@@ -151,6 +151,10 @@ impl Client {
                             Err(_) => return Err(RoliError::MalformedResponse),
                         };
 
+                        if !raw.success {
+                            return Err(RoliError::RequestReturnedUnsuccessful);
+                        }
+
                         let mut activities = Vec::new();
 
                         for raw_activity_codes in raw.activities {

@@ -181,6 +181,10 @@ impl Client {
                             Err(_) => return Err(RoliError::MalformedResponse),
                         };
 
+                        if !raw.success {
+                            return Err(RoliError::RequestReturnedUnsuccessful);
+                        }
+
                         let mut search_outputs = Vec::new();
 
                         for player in raw.players {
@@ -239,6 +243,10 @@ impl Client {
                             Ok(x) => x,
                             Err(_) => return Err(RoliError::MalformedResponse),
                         };
+
+                        if !raw.success {
+                            return Err(RoliError::RequestReturnedUnsuccessful);
+                        }
 
                         let mut badges = Vec::new();
 

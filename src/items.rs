@@ -209,6 +209,10 @@ impl Client {
                             Err(_) => return Err(RoliError::MalformedResponse),
                         };
 
+                        if !raw.success {
+                            return Err(RoliError::RequestReturnedUnsuccessful);
+                        }
+
                         let item_details = raw.into_vec()?;
 
                         Ok(item_details)
