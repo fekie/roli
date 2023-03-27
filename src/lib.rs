@@ -44,6 +44,8 @@ use serde::{Deserialize, Serialize};
 
 /// Contains all the endpoints associated with the deals page.
 pub mod deals;
+/// Contains all the endpoints associated with games.
+pub mod games;
 /// Contains all the endpoints associated with getting item details.
 pub mod items;
 /// Contains all the endpoints associated with players.
