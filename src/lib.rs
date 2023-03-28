@@ -21,7 +21,8 @@
 //!    - [`Client::games_list`]
 //! - [x] Groups API
 //!    - [`Client::group_search`]
-//! - [ ] Market Activity API
+//! - [x] Market Activity API
+//!   - [`Client::recent_sales`]
 //!
 //! # Quick Start
 //!
@@ -52,6 +53,8 @@ pub mod games;
 pub mod groups;
 /// Contains all the endpoints associated with getting item details.
 pub mod items;
+/// Contains all the endpoints associated with the market activity page.
+pub mod market_activity;
 /// Contains all the endpoints associated with players.
 pub mod players;
 /// Contains all the endpoints associated with the trade ads page.
