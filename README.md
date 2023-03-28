@@ -13,7 +13,7 @@ A low level api wrapper for Rolimons.com.
 - [x] Player API
 - [x] Game API
 - [x] Groups API
-- [ ] Market Activity API
+- [x] Market Activity API
 
 # Contributing
 Pull requests are welcome!
