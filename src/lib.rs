@@ -21,7 +21,8 @@
 //!    - [`Client::games_list`]
 //! - [x] Groups API
 //!    - [`Client::group_search`]
-//! - [ ] Market Activity API
+//! - [x] Market Activity API
+//!   - [`Client::recent_sales`]
 //!
 //! # Quick Start
 //!
