@@ -52,6 +52,8 @@ pub mod games;
 pub mod groups;
 /// Contains all the endpoints associated with getting item details.
 pub mod items;
+/// Contains all the endpoints associated with the market activity page.
+pub mod market_activity;
 /// Contains all the endpoints associated with players.
 pub mod players;
 /// Contains all the endpoints associated with the trade ads page.
