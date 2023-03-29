@@ -13,7 +13,7 @@ pub enum Activity {
     RapUpdate(RapUpdate),
 }
 
-/// A struct for a deal on the Rolimon's deal's page.
+/// A struct for a deal on the Rolimons deals page.
 ///
 /// The meaning of the second and fourth values in the item part of the
 /// json are currently unknown. Please submit an issue or pull request if you know what these are.
@@ -27,9 +27,9 @@ pub struct PriceUpdate {
     pub price: u64,
 }
 
-/// A rap update for an item on the Rolimon's deal's page.
+/// A rap update for an item on the Rolimons deals page.
 ///
-/// These are usually only used for validing that deals are within deal % on the client side
+/// These are usually only used for validating that deals are within deal % on the client side
 /// of the deals page.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Serialize, Deserialize)]
 pub struct RapUpdate {
@@ -42,7 +42,7 @@ pub struct RapUpdate {
 }
 
 /// Used for holding the raw json response from <https://www.rolimons.com/api/activity2>.
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct DealsActivityResponse {
     success: bool,
     activities: Vec<Vec<Code>>,
@@ -110,7 +110,7 @@ impl Activity {
 }
 
 impl Client {
-    /// A wrapper for <https://www.rolimons.com/api/activity2>.
+    /// A wrapper for the endpoint behind the deals page.
     ///
     /// Does not require authentication.
     ///
@@ -118,7 +118,7 @@ impl Client {
     /// full use of the api. Returns a Vec of [`Activity`] on success. An [`Activity`] contains either
     /// a [`PriceUpdate`] or [`RapUpdate`].
     ///
-    /// On the Rolimon's deal's page, this api is polled roughly every 3 seconds.
+    /// On the Rolimons deals page, this api is polled roughly every 3 seconds.
     ///
     /// # Example
     /// ```no_run
@@ -127,7 +127,7 @@ impl Client {
     /// # #[tokio::main]
     /// # async fn main() -> Result<(), Box<dyn Error>> {
     /// let client = roli::ClientBuilder::new().build();
-    /// let activites = client.deals_activity().await?;
+    /// let activities = client.deals_activity().await?;
     /// #
     /// # Ok(())
     /// # }

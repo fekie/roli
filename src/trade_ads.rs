@@ -46,6 +46,8 @@ impl Client {
     /// Note that the current ad limit is 55 per 24 hours, and the
     /// cooldown is 15 minutes.
     ///
+    /// Requires authentication.
+    ///
     /// # Example
     /// ```no_run
     /// # use std::error::Error;

@@ -1,7 +1,7 @@
-//! A low level api wrapper for Rolimons.com.
+//! A low level api wrapper for rolimons.com.
 //!
 //! This crate is a low level wrapper due to the fact that allowed
-//! requests to the api are limited. To maintain flexibiliy while also
+//! requests to the api are limited. To maintain flexibility while also
 //! using the api endpoints responsibly, the user is expected to maintain
 //! their own caching.
 //!
@@ -27,7 +27,7 @@
 //! # Quick Start
 //!
 //! This code snippet allows you to get a list of all limited items
-//! on Rolimon's, which includes information you would see on an item's page.
+//! on Rolimons, which includes information you would see on an item's page.
 //!
 //! ```no_run
 //! # use std::error::Error;
@@ -114,7 +114,7 @@ pub(crate) enum Code {
     String(String),
 }
 
-/// Used to interact with the rest of the Rolimons.com api wrapper.
+/// Used to interact with the rest of the rRolimons api wrapper.
 ///
 /// Contains any necessary authentication and the reqwest client. All
 /// [`Client`] methods make exactly one api call.
@@ -208,7 +208,7 @@ impl ClientBuilder {
     /// ```
     /// # use roli::{ClientBuilder, Client};
     /// let builder = ClientBuilder::new();
-    /// let client = builder.set_roli_verification("apikey".to_string()).build();
+    /// let client = builder.set_roli_verification("api_key".to_string()).build();
     /// assert!(client.contains_roli_verification())
     /// ```
     pub fn set_roli_verification(mut self, roli_verification: String) -> Self {
