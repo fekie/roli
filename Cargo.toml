@@ -19,4 +19,4 @@ thiserror = "1.0.40"
 
 [dev-dependencies]
 clap = { version = "4.1.13", features = ["derive"] }
-tokio = { version = "1", features = ["full"] }
+tokio = { version = "1.27.0", features = ["full"] }
