@@ -67,7 +67,8 @@ pub struct PlayerProfile {
     pub user_id: u64,
     /// Whether the player is terminated.
     pub terminated: bool,
-    /// Whether the player has their inventory privated.
+    /// Whether the player has their inventory hidden.
+    // Yes I know this isn't a word but that's just what the community calls it.
     pub privated: bool,
     /// Whether the player is currently online.
     pub is_online: bool,
@@ -83,7 +84,7 @@ pub struct PlayerProfile {
     pub inventory: Vec<PlayerAsset>,
 }
 
-/// Represents a Rolimon's badge.
+/// Represents a Rolimons badge.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub struct Badge {
     /// The name of the badge.
@@ -95,7 +96,7 @@ pub struct Badge {
 /// The type of presence the player has on Roblox (e.g. InGame, Website).
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub enum PresenceType {
-    /// Rolimon's is unable to find the player's presence type.
+    /// Rolimons is unable to find the player's presence type.
     Unavailable,
     /// The player is on the Roblox website.
     Website,
@@ -149,6 +150,8 @@ impl Client {
     ///
     /// Player name needn't match exactly as the endpoint
     /// will offer multiple possible name matches.
+    ///
+    /// Does not require authentication.
     ///
     /// # Example
     /// ```no_run
@@ -207,12 +210,14 @@ impl Client {
         }
     }
 
-    /// Gets a player's Rolimon's profile. Contains their Roblox inventory, Rolimon's badges, Roblox online status,
+    /// Gets a player's Rolimons profile. Contains their Roblox inventory, Rolimons badges, Roblox online status,
     /// Roblox termination status, and Roblox privacy status.
+    ///
+    /// Does not require authentication.
     ///
     /// # Warning
     ///
-    /// Heavy use of this endpoint is highly discouraged by the owner of Rolimon's. This endpoint is
+    /// Heavy use of this endpoint is highly discouraged by the owner of Rolimons. This endpoint is
     /// very intensive on their servers and they ask that you only use it when necessary. The Roblox API is
     /// much more efficient and should be used instead when possible.
     ///

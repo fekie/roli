@@ -13,7 +13,7 @@ struct GamesListResponse {
     games: HashMap<String, Vec<Code>>,
 }
 
-/// Represents a Roblox game found on the Rolimon's game list.
+/// Represents a Roblox game found on the Rolimons game list.
 /// Does not contain detailed statistics about the game.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Serialize, Deserialize)]
 pub struct Game {
@@ -24,15 +24,17 @@ pub struct Game {
     /// The amount of players currently playing the game.
     pub players_active: u64,
     /// The thumbnail url of the game. This comes from Roblox's cdn and
-    /// not Rolimon's.
+    /// not Rolimons.
     pub thumbnail_url: String,
 }
 
 impl Client {
-    /// Returns the Rolimon's list of games.
+    /// Returns the Rolimons list of games.
+    ///
+    /// Does not require authentication.
     ///
     /// Note that this is the only endpoint that lets you pull information on games.
-    /// Because of this, this endpoint returns every single game in the Rolimon's has tracked.
+    /// Because of this, this endpoint returns every single game Rolimons has tracked.
     /// This means that like [`Client::all_item_details`], this endpoint is intensive and
     /// users should cache results and use the endpoint sparingly.
     ///

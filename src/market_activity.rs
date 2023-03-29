@@ -23,10 +23,10 @@ pub struct Sale {
     pub new_rap: u64,
     /// The price the item was sold at.
     pub sale_price: u64,
-    /// The Rolimon's id of the sale. Used in the url https://www.rolimons.com/itemsale/{sale_id}.
+    /// The Rolimons id of the sale. Used in the url https://www.rolimons.com/itemsale/{sale_id}.
     pub sale_id: u64,
     /// The unix timestamp of the sale.
-    /// This is likely when the sale was detcted by Rolimon's.
+    /// This is likely when the sale was detected by Rolimons.
     pub timestamp: u64,
 }
 
@@ -39,7 +39,7 @@ impl Sale {
         //     327318670, item id
         //     4272, old rap, will be below 0 if no rap
         //     4314, current rap
-        //     4991002 sale id, used in https://www.rolimons.com/itemsale/4991002
+        //     4991002 sale id, used in <https://www.rolimons.com/itemsale/4991002>
         // ],
 
         if codes.len() != 6 {
@@ -77,7 +77,7 @@ impl Client {
     ///
     /// Provides information on the most recent limited sales.
     ///
-    /// On the Rolimons.com dealss page, this api is polled roughly every 3 seconds.
+    /// On the Rolimons deals page, this api is polled roughly every 3 seconds.
     ///
     /// Does not require authentication.
     ///

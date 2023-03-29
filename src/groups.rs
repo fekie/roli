@@ -12,7 +12,7 @@ struct GroupSearchResponse {
     groups: Vec<Vec<Code>>,
 }
 
-/// Represents a Roblox group found on the Rolimon's group search.
+/// Represents a Roblox group found on the Rolimons group search.
 ///
 /// Does not contain detailed statistics about the group.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Serialize, Deserialize)]
@@ -42,10 +42,10 @@ impl GroupSearchResult {
         // ]
 
         // The 4th and 5th element are currently unknown and do not serve a purpose
-        // in the client side code on rolimons.com.
+        // in the client side code on Rolimons.
         // However, at least one of these is likely to be referring to the access type
         // of the group (public, private, locked). However, I have not be able to find a locked or private group
-        // that has been added to rolimons.com. Also, it is unknown what the timestamp corresponds to,
+        // that has been added to Rolimons. Also, it is unknown what the timestamp corresponds to,
         // and it does not appear to be the tracked date.
         // If you can find some good examples or know what these are, please
         // create an issue on the github repo (or even a pr).
@@ -69,10 +69,12 @@ impl GroupSearchResult {
 }
 
 impl Client {
-    /// Searches for a group on Rolimon's.
+    /// Searches for a group on Rolimons.
     ///
     /// Group name needn't match exactly as the endpoint
     /// will offer multiple possible name matches.
+    ///
+    /// Does not require authentication.
     ///
     /// # Example
     /// ```no_run

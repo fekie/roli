@@ -175,7 +175,7 @@ impl Client {
     /// Does not require authentication.
     ///
     /// # Warning
-    /// Although the ratelimit is 10 requests per minute, the owner will ban people who continually abuse this api.
+    /// Although the rate limit is 10 requests per minute, the owner will ban people who continually abuse this api.
     /// The data this endpoint is serving is cached on the server for 60 seconds, so there is no point in spamming it anyways.
     ///
     /// # Example
