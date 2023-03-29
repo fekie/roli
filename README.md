@@ -1,3 +1,8 @@
+[![Crates.io](https://img.shields.io/crates/v/roli.svg)](https://crates.io/crates/roli)
+[![Documentation](https://docs.rs/roli/badge.svg)](https://docs.rs/roli/)
+[![dependency status](https://deps.rs/repo/github/chloe-woahie/roli/status.svg)](https://deps.rs/repo/github/chloe-woahie/roli)
+
+
 # roli
 
 A low level api wrapper for Rolimons.com.
