@@ -5,7 +5,7 @@
 
 # roli
 
-A low level api wrapper for rolimons.com.
+A low level API wrapper for Rolimons.com.
 
 # Notes
 
