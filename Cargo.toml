@@ -1,7 +1,7 @@
 [package]
 authors = ["Cayden <longwelldotpy@gmail.com>"]
 categories = ["api-bindings"]
-description = "A low level api wrapper for rolimons.com."
+description = "A low level API wrapper for Rolimons.com."
 edition = "2021"
 keywords = ["rolimons", "roli", "roblox", "api"]
 license = "MIT"

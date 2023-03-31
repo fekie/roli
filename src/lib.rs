@@ -1,4 +1,4 @@
-//! A low level api wrapper for rolimons.com.
+//! A low level API wrapper for Rolimons.com.
 //!
 //! This crate is a low level wrapper due to the fact that allowed
 //! requests to the api are limited. To maintain flexibility while also
