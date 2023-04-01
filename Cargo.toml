@@ -7,7 +7,7 @@ keywords = ["rolimons", "roli", "roblox", "api"]
 license = "MIT"
 name = "roli"
 readme = "README.md"
-repository = "https://github.com/Chloe-Woahie/roli-rs"
+repository = "https://github.com/Chloe-Woahie/roli"
 version = "0.6.4"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
