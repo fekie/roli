@@ -2,6 +2,8 @@
 [![Documentation](https://docs.rs/roli/badge.svg)](https://docs.rs/roli/)
 [![dependency status](https://deps.rs/repo/github/chloe-woahie/roli/status.svg)](https://deps.rs/repo/github/chloe-woahie/roli)
 
+[![](https://dcbadge.vercel.app/api/server/QmBEgPaFSD)](https://discord.gg/QmBEgPaFSD)
+
 <img align="right" src="images/icon2.png" height="150px" alt="roli logo">
 
 # roli
