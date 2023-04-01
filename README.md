@@ -23,6 +23,9 @@ A low level API wrapper for Rolimons.com.
 - [x] Groups API
 - [x] Market Activity API
 
+# Related Crates
+This crate is a sister crate of [roboat](https://crates.io/crates/roboat), an API wrapper for [Roblox.com](https://www.roblox.com/).
+
 # Contributing
 Pull requests are welcome!
 
