@@ -94,7 +94,7 @@ pub struct Badge {
 }
 
 /// The type of presence the player has on Roblox (e.g. InGame, Website).
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, Copy)]
 pub enum PresenceType {
     /// Rolimons is unable to find the player's presence type.
     Unavailable,

@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 const DEALS_ACTIVITY_API: &str = "https://www.rolimons.com/api/activity2";
 
 /// The objects returned from parsing the json from the endpoint <https://www.rolimons.com/api/activity2>.
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, Copy)]
 pub enum Activity {
     /// A variant for a price update activity.
     PriceUpdate(PriceUpdate),
@@ -17,7 +17,9 @@ pub enum Activity {
 ///
 /// The meaning of the second and fourth values in the item part of the
 /// json are currently unknown. Please submit an issue or pull request if you know what these are.
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Serialize, Deserialize)]
+#[derive(
+    Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Serialize, Deserialize, Copy,
+)]
 pub struct PriceUpdate {
     /// The timestamp of the activity in unix time.
     pub timestamp: u64,
@@ -31,7 +33,9 @@ pub struct PriceUpdate {
 ///
 /// These are usually only used for validating that deals are within deal % on the client side
 /// of the deals page.
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Serialize, Deserialize)]
+#[derive(
+    Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Serialize, Deserialize, Copy,
+)]
 pub struct RapUpdate {
     /// The timestamp of the activity in unix time.
     pub timestamp: u64,
