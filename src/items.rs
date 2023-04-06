@@ -6,7 +6,9 @@ use std::collections::HashMap;
 const ITEM_DETAILS_API: &str = "https://www.rolimons.com/itemapi/itemdetails";
 
 /// Represents the demand of an item.
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Serialize, Deserialize)]
+#[derive(
+    Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Serialize, Deserialize, Copy,
+)]
 pub enum Demand {
     /// The demand of the item is unassigned.
     #[default]
@@ -24,7 +26,9 @@ pub enum Demand {
 }
 
 /// Represents the trend of an item.
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Serialize, Deserialize)]
+#[derive(
+    Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Serialize, Deserialize, Copy,
+)]
 pub enum Trend {
     #[default]
     /// The trend of the item is unassigned.
