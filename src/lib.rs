@@ -41,6 +41,9 @@
 //! }
 //! ```
 
+// todo: please pub use ItemDetails
+// todo: make it so roli_verification can be set on creation
+
 #![warn(missing_docs)]
 
 use serde::{Deserialize, Serialize};
