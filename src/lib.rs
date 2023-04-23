@@ -43,6 +43,7 @@
 
 // todo: please pub use ItemDetails
 // todo: make it so roli_verification can be set on creation
+// todo: list the errors that can be returned in each endpoint, like in roboat.
 
 #![warn(missing_docs)]
 
