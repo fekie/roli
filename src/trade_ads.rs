@@ -55,7 +55,7 @@ impl Client {
     ///
     /// # #[tokio::main]
     /// # async fn main() -> Result<(), Box<dyn Error>> {
-    /// let client = roli::Client::with_roli_verification("xxx".to_string());
+    /// let client = roli::ClientBuilder::new().set_roli_verification("xxx".to_string()).build();
     ///
     /// let request_tag = trade_ads::RequestTag::Any;
     ///

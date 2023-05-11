@@ -1,5 +1,5 @@
 use clap::Parser;
-use roli::{trade_ads, Client};
+use roli::{trade_ads, ClientBuilder};
 
 // To post a trade ad where you offer space hair for "any":
 // cargo run --example --roli-verification xxx post_trade_ad -- --player-id 123456789 --offer-item-ids 564449640 --request-tags "any"
@@ -51,7 +51,9 @@ async fn main() {
         })
         .collect();
 
-    let client = Client::with_roli_verification(args.roli_verification);
+    let client = ClientBuilder::new()
+        .set_roli_verification(args.roli_verification)
+        .build();
 
     let create_trade_ad_params = trade_ads::CreateTradeAdParams {
         player_id: args.player_id,
