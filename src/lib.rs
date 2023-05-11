@@ -41,6 +41,10 @@
 //! }
 //! ```
 
+// todo: please pub use ItemDetails
+// todo: make it so roli_verification can be set on creation
+// todo: list the errors that can be returned in each endpoint, like in roboat.
+
 #![warn(missing_docs)]
 
 use serde::{Deserialize, Serialize};
@@ -117,7 +121,9 @@ pub(crate) enum Code {
 /// Used to interact with the rest of the rRolimons api wrapper.
 ///
 /// Contains any necessary authentication and the reqwest client. All
-/// [`Client`] methods make exactly one api call.
+/// `Client` methods make exactly one api call.
+///
+/// Created using a [`ClientBuilder`].
 #[derive(Clone, Debug, Default)]
 pub struct Client {
     roli_verification: Option<String>,
@@ -154,6 +160,7 @@ impl std::fmt::Display for Code {
 }
 
 impl Client {
+    #[deprecated(since = "0.6.7", note = "Use ClientBuilder::new().build() instead.")]
     /// Constructs a client without providing a roli verification token or custom
     /// reqwest client.
     ///
@@ -162,6 +169,10 @@ impl Client {
         Self::default()
     }
 
+    #[deprecated(
+        since = "0.6.7",
+        note = "Use ClientBuilder::new().set_roli_verification(roli_verification).build() instead."
+    )]
     /// Constructs a new [`Client`] with a roli verification token.
     pub fn with_roli_verification(roli_verification: String) -> Self {
         Self {
@@ -170,6 +181,10 @@ impl Client {
         }
     }
 
+    #[deprecated(
+        since = "0.6.7",
+        note = "Use ClientBuilder::new().set_roli_verification(roli_verification).build() instead."
+    )]
     /// Sets the value for the optional `roli_verification` field.
     pub fn set_roli_verification(&mut self, roli_verification: String) {
         self.roli_verification = Some(roli_verification);

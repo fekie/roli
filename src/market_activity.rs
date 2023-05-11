@@ -23,7 +23,7 @@ pub struct Sale {
     pub new_rap: u64,
     /// The price the item was sold at.
     pub sale_price: u64,
-    /// The Rolimons id of the sale. Used in the url https://www.rolimons.com/itemsale/{sale_id}.
+    /// The Rolimons id of the sale. Used in the url <https://www.rolimons.com/itemsale/{sale_id}>.
     pub sale_id: u64,
     /// The unix timestamp of the sale.
     /// This is likely when the sale was detected by Rolimons.
