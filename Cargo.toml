@@ -1,5 +1,5 @@
 [package]
-authors = ["Cayden <longwelldotpy@gmail.com>"]
+authors = ["fekie <fekiewekie@gmail.com>"]
 categories = ["api-bindings"]
 description = "A low level API wrapper for Rolimons.com."
 edition = "2021"
