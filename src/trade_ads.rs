@@ -236,17 +236,53 @@ impl Client {
     /// Does not appear to have a rate limit, but I would still use it sparingly.
     ///
     /// # Example
+    ///
     /// ```no_run
-    /// # use std::error::Error;
-    /// #
     /// # #[tokio::main]
-    /// # async fn main() -> Result<(), Box<dyn Error>> {
-    /// let client = roli::ClientBuilder::new().build();
-    /// let all_item_details = client.all_item_details().await?;
-    /// #
-    /// # Ok(())
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use roli::ClientBuilder;
+    ///
+    /// let roli_client = ClientBuilder::new().build();
+    /// let recent_trade_ads = roli_client.recent_trade_ads().await?;
+    /// let all_item_details = roli_client.all_item_details().await?;
+    ///
+    /// for trade_ad in recent_trade_ads {
+    ///     let offer_value = trade_ad
+    ///         .offer
+    ///         .items
+    ///         .iter()
+    ///         .map(|id| {
+    ///             all_item_details
+    ///                 .iter()
+    ///                 .find(|item| item.item_id == *id)
+    ///                 .unwrap()
+    ///                 .value
+    ///         })
+    ///         .sum::<u64>()
+    ///         + trade_ad.offer.robux.unwrap_or_default();
+    ///
+    ///     let request_value = trade_ad
+    ///         .request
+    ///         .items
+    ///         .iter()
+    ///         .map(|id| {
+    ///             all_item_details
+    ///                 .iter()
+    ///                 .find(|item| item.item_id == *id)
+    ///                 .unwrap()
+    ///                 .value
+    ///         })
+    ///         .sum::<u64>();
+    ///
+    ///     println!(
+    ///         "Trade {} is offering a total value of {} for a total value of {}",
+    ///         trade_ad.trade_id, offer_value, request_value
+    ///     );
+    /// }
+    /// Ok(())
     /// # }
     /// ```
+
     pub async fn recent_trade_ads(&self) -> Result<Vec<TradeAd>, RoliError> {
         let mut headers = header::HeaderMap::new();
 
