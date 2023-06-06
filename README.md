@@ -14,7 +14,7 @@ A low level API wrapper for Rolimons.com.
 
 * This crate is a low level wrapper due to the fact that allowed requests to the website are limited. To maintain flexibility while also using the endpoints responsibly, the user is expected to maintain their own caching.
 
-# API Coverage Checklist
+# API Coverage Checklist (Complete!)
 - [x] Items API
 - [x] Deals API
 - [x] Trade Ad API
@@ -22,7 +22,6 @@ A low level API wrapper for Rolimons.com.
 - [x] Game API
 - [x] Groups API
 - [x] Market Activity API
-- [ ] Hidden APIs (undocumented APIs that are only found in the source code)
 
 # Related Crates
 This crate is a sister crate of [roboat](https://crates.io/crates/roboat), an API wrapper for [Roblox.com](https://www.roblox.com/).
