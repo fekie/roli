@@ -14,6 +14,7 @@
 //!     - [`Client::all_item_details`]
 //! - [x] Trade Ad API
 //!    - [`Client::create_trade_ad`]
+//!    - [`Client::recent_trade_ads`]
 //! - [x] Player API
 //!    - [`Client::player_search`]
 //!    - [`Client::player_profile`]
@@ -44,6 +45,7 @@
 // todo: please pub use ItemDetails
 // todo: make it so roli_verification can be set on creation
 // todo: list the errors that can be returned in each endpoint, like in roboat.
+// todo: fix examples to not use deprecated methods
 
 #![warn(missing_docs)]
 
