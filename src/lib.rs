@@ -14,7 +14,6 @@
 //!     - [`Client::all_item_details`]
 //! - [x] Trade Ad API
 //!    - [`Client::create_trade_ad`]
-//!    - [`Client::recent_trade_ads`]
 //! - [x] Player API
 //!    - [`Client::player_search`]
 //!    - [`Client::player_profile`]
@@ -24,6 +23,8 @@
 //!    - [`Client::group_search`]
 //! - [x] Market Activity API
 //!   - [`Client::recent_sales`]
+//! - [ ] Hidden APIs
+//!   - [`Client::recent_trade_ads`]
 //!
 //! # Quick Start
 //!
