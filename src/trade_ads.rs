@@ -26,6 +26,26 @@ pub enum RequestTag {
     Adds,
 }
 
+impl TryFrom<u8> for RequestTag {
+    type Error = RoliError;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            1 => Ok(Self::Demand),
+            2 => Ok(Self::Rares),
+            3 => Ok(Self::Robux),
+            4 => Ok(Self::Any),
+            5 => Ok(Self::Upgrade),
+            6 => Ok(Self::Downgrade),
+            7 => Ok(Self::Rap),
+            8 => Ok(Self::Wishlist),
+            9 => Ok(Self::Projecteds),
+            10 => Ok(Self::Adds),
+            _ => Err(RoliError::MalformedResponse),
+        }
+    }
+}
+
 /// Used to specify details of the trade one wants to post.
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Clone, Default)]
 pub struct CreateTradeAdParams {
