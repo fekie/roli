@@ -4,6 +4,7 @@ use reqwest::header;
 use serde::{Deserialize, Serialize};
 
 const CREATE_TRADE_AD_API: &str = "https://www.rolimons.com/tradeapi/create";
+const RECENT_TRADE_ADS_API: &str = "https://www.rolimons.com/tradeadsapi/getrecentads";
 
 /// The optional request tags that can be used in place
 /// of items when making a trade ad.
@@ -44,6 +45,78 @@ impl TryFrom<u8> for RequestTag {
             _ => Err(RoliError::MalformedResponse),
         }
     }
+}
+
+/// A full (posted) trade ad.
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Clone, Default)]
+pub struct TradeAd {
+    /// The id of the trade ad.
+    pub trade_id: u64,
+    /// The timestamp of when the trade ad was created.
+    pub timestamp: u64,
+    /// The id of the user who created the trade ad.
+    pub user_id: u64,
+    /// The username of the user who created the trade ad.
+    pub username: String,
+    /// The offer side of the trade ad.
+    pub offer: Offer,
+    /// The request side of the trade ad.
+    pub request: Request,
+}
+
+/// The offer side of a trade ad.
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, Eq, PartialOrd, Ord, Hash)]
+pub struct Offer {
+    /// The ids of the items being offered.
+    pub items: Vec<u64>,
+    /// The amount of robux (before tax) being offered.
+    pub robux: Option<u64>,
+}
+
+/// The request side of a trade ad.
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, Eq, PartialOrd, Ord, Hash)]
+pub struct Request {
+    /// The ids of the items being requested.
+    pub items: Vec<u64>,
+    /// The trade tags being requested (like `Any`, `Demand`, and `Projecteds`).
+    pub tags: Vec<RequestTag>,
+}
+
+impl TryFrom<RequestRaw> for Request {
+    type Error = RoliError;
+
+    fn try_from(value: RequestRaw) -> Result<Self, Self::Error> {
+        let mut tags = Vec::new();
+
+        for tag in value.tags {
+            tags.push(RequestTag::try_from(tag)?);
+        }
+
+        Ok(Self {
+            items: value.items,
+            tags,
+        })
+    }
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct RecentTradeAdsResponse {
+    pub success: bool,
+    #[serde(rename = "trade_ad_count")]
+    pub trade_ad_count: u64,
+    /// Follows pattern: (trade_ad_id, timestamp, player_id, player_name, offer, request)
+    #[serde(rename = "trade_ads")]
+    pub trade_ads: Vec<(u64, u64, u64, String, Offer, RequestRaw)>,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct RequestRaw {
+    #[serde(default)]
+    pub tags: Vec<u8>,
+    #[serde(default)]
+    pub items: Vec<u64>,
 }
 
 /// Used to specify details of the trade one wants to post.
@@ -148,6 +221,91 @@ impl Client {
                     400 => Err(RoliError::CooldownNotExpired),
                     422 => Err(RoliError::RoliVerificationInvalidOrExpired),
                     429 => Err(RoliError::TooManyRequests),
+                    _ => Err(RoliError::UnidentifiedStatusCode(status_code)),
+                }
+            }
+
+            Err(e) => Err(RoliError::ReqwestError(e)),
+        }
+    }
+
+    /// Fetches all trade ads made in the last 3 minutes.
+    ///
+    /// Does not require authentication.
+    ///
+    /// Does not appear to have a rate limit, but I would still use it sparingly.
+    ///
+    /// # Example
+    /// ```no_run
+    /// # use std::error::Error;
+    /// #
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn Error>> {
+    /// let client = roli::ClientBuilder::new().build();
+    /// let all_item_details = client.all_item_details().await?;
+    /// #
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub async fn recent_trade_ads(&self) -> Result<Vec<TradeAd>, RoliError> {
+        let mut headers = header::HeaderMap::new();
+
+        headers.insert(
+            header::USER_AGENT,
+            header::HeaderValue::from_static(
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:101.0) Gecko/20100101 Firefox/101.0",
+            ),
+        );
+
+        headers.insert(
+            header::CONNECTION,
+            header::HeaderValue::from_static("keep-alive"),
+        );
+
+        headers.insert(
+            header::CONTENT_TYPE,
+            header::HeaderValue::from_static("application/json;charset=utf-8"),
+        );
+
+        let result = self
+            .reqwest_client
+            .get(RECENT_TRADE_ADS_API)
+            .headers(headers)
+            .send()
+            .await;
+
+        match result {
+            Ok(response) => {
+                let status_code = response.status().as_u16();
+
+                match status_code {
+                    200 => {
+                        let raw = match response.json::<RecentTradeAdsResponse>().await {
+                            Ok(x) => x,
+                            Err(_) => return Err(RoliError::MalformedResponse),
+                        };
+
+                        let mut trade_ads = Vec::new();
+
+                        for (trade_id, timestamp, user_id, username, offer, request_raw) in
+                            raw.trade_ads
+                        {
+                            let request = Request::try_from(request_raw)?;
+
+                            trade_ads.push(TradeAd {
+                                trade_id,
+                                timestamp,
+                                user_id,
+                                username,
+                                offer,
+                                request,
+                            });
+                        }
+
+                        Ok(trade_ads)
+                    }
+                    429 => Err(RoliError::TooManyRequests),
+                    500 => Err(RoliError::InternalServerError),
                     _ => Err(RoliError::UnidentifiedStatusCode(status_code)),
                 }
             }
