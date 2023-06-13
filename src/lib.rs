@@ -13,6 +13,7 @@
 //! - [x] Deals API
 //!     - [`Client::deals_activity`]
 //! - [x] Trade Ad API
+//!    - [`Client::recent_trade_ads`]
 //!    - [`Client::create_trade_ad`]
 //! - [x] Player API
 //!    - [`Client::player_search`]
@@ -23,8 +24,6 @@
 //!    - [`Client::group_search`]
 //! - [x] Market Activity API
 //!   - [`Client::recent_sales`]
-//! - [ ] Hidden APIs
-//!   - [`Client::recent_trade_ads`]
 //!
 //! # Quick Start
 //!
