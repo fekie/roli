@@ -73,7 +73,7 @@ impl Sale {
 }
 
 impl Client {
-    /// A wrapper for for market activity page.
+    /// A wrapper for the market activity page.
     ///
     /// Provides information on the most recent limited sales.
     ///
