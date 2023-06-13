@@ -174,7 +174,7 @@ impl AllItemDetailsResponse {
 }
 
 impl Client {
-    /// A wrapper for <https://www.rolimons.com/itemapi/itemdetails>.
+    /// A wrapper for the item details API.
     ///
     /// Does not require authentication.
     ///
