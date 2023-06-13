@@ -9,9 +9,9 @@
 //!
 //! # API Coverage Checklist
 //! - [x] Items API
-//!     - [`Client::deals_activity`]
-//! - [x] Deals API
 //!     - [`Client::all_item_details`]
+//! - [x] Deals API
+//!     - [`Client::deals_activity`]
 //! - [x] Trade Ad API
 //!    - [`Client::create_trade_ad`]
 //! - [x] Player API
