@@ -4,7 +4,7 @@ use reqwest::header;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-const GAMES_LIST_URL: &str = "https://www.rolimons.com/gameapi/gamelist";
+const GAMES_LIST_URL: &str = "https://api.rolimons.com/games/v1/gamelist";
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 struct GamesListResponse {
