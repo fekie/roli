@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 const DEALS_ACTIVITY_API: &str = "https://api.rolimons.com/market/v1/dealactivity";
 
-/// The objects returned from parsing the json from the endpoint <https://www.rolimons.com/api/activity2>.
+/// The objects returned from parsing the json from the endpoint <https://api.rolimons.com/market/v1/dealactivity>.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, Copy)]
 pub enum Activity {
     /// A variant for a price update activity.
@@ -45,7 +45,7 @@ pub struct RapUpdate {
     pub rap: u64,
 }
 
-/// Used for holding the raw json response from <https://www.rolimons.com/api/activity2>.
+/// Used for holding the raw json response from <https://api.rolimons.com/market/v1/dealactivity>.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct DealsActivityResponse {
     success: bool,
