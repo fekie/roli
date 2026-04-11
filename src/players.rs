@@ -3,7 +3,7 @@ use reqwest::header;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-const PLAYER_SEARCH_API: &str = "https://www.rolimons.com/api/playersearch";
+const PLAYER_SEARCH_API: &str = "https://api.rolimons.com/players/v1/playersearch";
 const PLAYER_API: &str = "https://www.rolimons.com/api/playerassets/";
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
