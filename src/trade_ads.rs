@@ -3,8 +3,8 @@ use crate::RoliError;
 use reqwest::header;
 use serde::{Deserialize, Serialize};
 
-const CREATE_TRADE_AD_API: &str = "https://www.rolimons.com/tradeapi/create";
-const RECENT_TRADE_ADS_API: &str = "https://www.rolimons.com/tradeadsapi/getrecentads";
+const CREATE_TRADE_AD_API: &str = "https://api.rolimons.com/tradeads/v1/createad";
+const RECENT_TRADE_ADS_API: &str = "https://api.rolimons.com/tradeads/v1/getrecentads";
 
 /// The optional request tags that can be used in place
 /// of items when making a trade ad.
