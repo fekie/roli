@@ -51,8 +51,6 @@ struct PlayerProfileResponse {
     last_place_id: Option<u64>,
     #[serde(rename = "locationGameIsTracked")]
     location_game_is_tracked: bool,
-    #[serde(rename = "locationGameIconUrl")]
-    location_game_icon_url: Option<String>,
     premium: bool,
     badges: HashMap<String, u64>,
     holds: Vec<u64>,
@@ -73,6 +71,9 @@ pub struct PlayerProfile {
     pub privated: bool,
     /// Whether the player is currently online.
     pub is_online: bool,
+    /// The unix timestamp of the player's last online status. \
+    /// At some point Roblox stopped providing this info, so this field will be None when the player is offline.
+    pub last_online: Option<u64>,
     /// Whether the player has premium.
     pub premium: bool,
     /// The type of presence the player has (e.g. Unavailable, Website, InGame).
@@ -289,6 +290,7 @@ impl Client {
                             inventory,
                             is_online: raw.is_online,
                             presence_type: PresenceType::from_u8(raw.presence_type),
+                            last_online: raw.last_online,
                             premium: raw.premium,
                             badges,
                             holds: raw.holds,
