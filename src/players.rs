@@ -3,8 +3,8 @@ use reqwest::header;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-const PLAYER_SEARCH_API: &str = "https://www.rolimons.com/api/playersearch";
-const PLAYER_API: &str = "https://www.rolimons.com/api/playerassets/";
+const PLAYER_SEARCH_API: &str = "https://api.rolimons.com/players/v1/playersearch";
+const PLAYER_API: &str = "https://api.rolimons.com/players/v1/playerassets/";
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 struct PlayerSearchResponse {
@@ -44,17 +44,16 @@ struct PlayerProfileResponse {
     #[serde(rename = "presenceType")]
     presence_type: u8,
     #[serde(rename = "lastOnline")]
-    last_online: u64,
+    last_online: Option<u64>,
     #[serde(rename = "lastLocation")]
     last_location: String,
     #[serde(rename = "lastPlaceId")]
     last_place_id: Option<u64>,
     #[serde(rename = "locationGameIsTracked")]
     location_game_is_tracked: bool,
-    #[serde(rename = "locationGameIconUrl")]
-    location_game_icon_url: Option<String>,
     premium: bool,
     badges: HashMap<String, u64>,
+    holds: Vec<u64>,
 }
 
 /// Represents a player's inventory.
@@ -72,9 +71,10 @@ pub struct PlayerProfile {
     pub privated: bool,
     /// Whether the player is currently online.
     pub is_online: bool,
-    /// The unix timestamp of the player's last online status.
-    pub last_online: u64,
-    /// Whether the player has premium
+    /// The unix timestamp of the player's last online status. \
+    /// At some point Roblox stopped providing this info, so this field will be None when the player is offline.
+    pub last_online: Option<u64>,
+    /// Whether the player has premium.
     pub premium: bool,
     /// The type of presence the player has (e.g. Unavailable, Website, InGame).
     pub presence_type: PresenceType,
@@ -82,6 +82,8 @@ pub struct PlayerProfile {
     pub badges: Vec<Badge>,
     /// The player's inventory. Each player asset includes item ids, as well as uaids owned.
     pub inventory: Vec<PlayerAsset>,
+    /// A list of the player's items that are on hold.
+    pub holds: Vec<u64>,
 }
 
 /// Represents a Rolimons badge.
@@ -291,6 +293,7 @@ impl Client {
                             last_online: raw.last_online,
                             premium: raw.premium,
                             badges,
+                            holds: raw.holds,
                         })
                     }
                     429 => Err(RoliError::TooManyRequests),

@@ -3,7 +3,7 @@ use reqwest::header;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-const ITEM_DETAILS_API: &str = "https://www.rolimons.com/itemapi/itemdetails";
+const ITEM_DETAILS_API: &str = "https://api.rolimons.com/items/v2/itemdetails";
 
 /// Represents the demand of an item.
 #[derive(
@@ -45,6 +45,18 @@ pub enum Trend {
     Fluctuating,
 }
 
+/// Represents the version of a limited.
+#[derive(
+    Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Default, Hash, Serialize, Deserialize, Copy,
+)]
+pub enum LimitedVersion {
+    #[default]
+    /// The item is Limited 1.0.
+    V1,
+    /// The item is Limited 2.0.
+    V2,
+}
+
 /// Struct representing details of an item (using Rolimons information).
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Serialize, Deserialize)]
 pub struct ItemDetails {
@@ -70,9 +82,11 @@ pub struct ItemDetails {
     pub hyped: bool,
     /// Whether the item is rare or not.
     pub rare: bool,
+    /// Whether the item is Limited 1.0 or 2.0.
+    pub limited_version: LimitedVersion,
 }
 
-/// Used for holding the raw json response from <https://www.rolimons.com/itemapi/itemdetails>.
+/// Used for holding the raw json response from <https://api.rolimons.com/items/v2/itemdetails>.
 #[derive(Default, Serialize, Deserialize)]
 struct AllItemDetailsResponse {
     success: bool,
@@ -138,6 +152,12 @@ impl ItemDetails {
             _ => return Err(RoliError::MalformedResponse),
         };
 
+        let limited_version = match codes[10].to_i64()? {
+            1 => LimitedVersion::V1,
+            2 => LimitedVersion::V2,
+            _ => return Err(RoliError::MalformedResponse),
+        };
+
         Ok(ItemDetails {
             item_id,
             item_name,
@@ -150,6 +170,7 @@ impl ItemDetails {
             projected,
             hyped,
             rare,
+            limited_version,
         })
     }
 }
@@ -249,6 +270,7 @@ mod tests {
             Code::Integer(1),
             Code::Integer(1),
             Code::Integer(1),
+            Code::Integer(1),
         ];
 
         let result = ItemDetails::from_raw(item_id, codes);
@@ -268,6 +290,7 @@ mod tests {
         assert!(item_details.projected);
         assert!(item_details.hyped);
         assert!(item_details.rare);
+        assert_eq!(item_details.limited_version, LimitedVersion::V1);
     }
 
     #[test]
@@ -281,6 +304,7 @@ mod tests {
             Code::Integer(200),
             Code::Integer(3),
             Code::Integer(4),
+            Code::Integer(1),
             Code::Integer(1),
             Code::Integer(1),
             Code::Integer(1),

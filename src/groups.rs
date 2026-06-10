@@ -3,7 +3,7 @@ use crate::{Client, Code};
 use reqwest::header;
 use serde::{Deserialize, Serialize};
 
-const GROUP_SEARCH_URL: &str = "https://www.rolimons.com/groupapi/search?searchstring=";
+const GROUP_SEARCH_URL: &str = "https://api.rolimons.com/groups/v1/groupsearch?searchstring=";
 
 #[derive(Serialize, Deserialize)]
 struct GroupSearchResponse {

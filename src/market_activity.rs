@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::{Client, Code, RoliError};
 use reqwest::header;
 
-const MARKET_ACTIVITY_URL: &str = "https://www.rolimons.com/api/activity";
+const MARKET_ACTIVITY_URL: &str = "https://api.rolimons.com/market/v1/saleactivity";
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct RecentSalesResponse {
@@ -35,31 +35,22 @@ impl Sale {
         // Follows form of
         // [
         //     1679978239, timestamp
-        //     1, unknown
         //     327318670, item id
         //     4272, old rap, will be below 0 if no rap
         //     4314, current rap
         //     4991002 sale id, used in <https://www.rolimons.com/itemsale/4991002>
         // ],
 
-        if codes.len() != 6 {
-            return Err(RoliError::MalformedResponse);
-        }
-
-        // It doesn't seem like the value will ever not be 1.
-        // However, as this look like the code somewhat corresponds to the type of activity,
-        // if the value is not 1 then we return a malformed response.
-        let activity_type = codes[1].to_i64()? as u64;
-        if activity_type != 1 {
+        if codes.len() != 5 {
             return Err(RoliError::MalformedResponse);
         }
 
         let timestamp = codes[0].to_i64()? as u64;
-        let item_id = codes[2].to_i64()? as u64;
-        let old_rap = codes[3].to_i64()? as u64;
-        let new_rap = codes[4].to_i64()? as u64;
+        let item_id = codes[1].to_i64()? as u64;
+        let old_rap = codes[2].to_i64()? as u64;
+        let new_rap = codes[3].to_i64()? as u64;
         let sale_price = calculate_sale_price(old_rap, new_rap);
-        let sale_id = codes[5].to_i64()? as u64;
+        let sale_id = codes[4].to_i64()? as u64;
 
         Ok(Self {
             item_id,

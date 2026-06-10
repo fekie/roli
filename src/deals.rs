@@ -2,9 +2,9 @@ use crate::{Client, Code, RoliError};
 use reqwest::header;
 use serde::{Deserialize, Serialize};
 
-const DEALS_ACTIVITY_API: &str = "https://www.rolimons.com/api/activity2";
+const DEALS_ACTIVITY_API: &str = "https://api.rolimons.com/market/v1/dealactivity";
 
-/// The objects returned from parsing the json from the endpoint <https://www.rolimons.com/api/activity2>.
+/// The objects returned from parsing the json from the endpoint <https://api.rolimons.com/market/v1/dealactivity>.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, Copy)]
 pub enum Activity {
     /// A variant for a price update activity.
@@ -45,7 +45,7 @@ pub struct RapUpdate {
     pub rap: u64,
 }
 
-/// Used for holding the raw json response from <https://www.rolimons.com/api/activity2>.
+/// Used for holding the raw json response from <https://api.rolimons.com/market/v1/dealactivity>.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct DealsActivityResponse {
     success: bool,
@@ -56,7 +56,7 @@ impl Activity {
     /// Converts a vector of Code into an Activity object representing a Roblox item activity, which is
     /// either a [`PriceUpdate`] or a [`RapUpdate`].
     fn from_raw(codes: Vec<Code>) -> Result<Self, RoliError> {
-        if codes.len() != 5 {
+        if codes.len() != 4 {
             return Err(RoliError::MalformedResponse);
         }
 
@@ -65,7 +65,6 @@ impl Activity {
         //     1678939600,
         //     0,
         //     "3016210752",
-        //     0,
         //     108
         // ]
 
@@ -74,15 +73,11 @@ impl Activity {
         //     1678939605,
         //     1,
         //     "3016210752",
-        //     0,
         //     92
         // ]
 
-        // If the second value is a 1, then the fifth value determines the rap.
-        // If the second value is a 0, then the fifth value determines the price.
-
-        // The fourth value of these is unknown, but some analysis of the client code
-        // makes this value appear to only be used internally, if at all.
+        // If the second value is a 1, then the fourth value determines the rap.
+        // If the second value is a 0, then the fourth value determines the price.
 
         let is_price_update = codes[1].to_i64()? == 0;
 
@@ -92,7 +87,7 @@ impl Activity {
 
         match is_price_update {
             true => {
-                let price = codes[4].to_i64()? as u64;
+                let price = codes[3].to_i64()? as u64;
 
                 Ok(Activity::PriceUpdate(PriceUpdate {
                     timestamp,
@@ -101,7 +96,7 @@ impl Activity {
                 }))
             }
             false => {
-                let rap = codes[4].to_i64()? as u64;
+                let rap = codes[3].to_i64()? as u64;
 
                 Ok(Activity::RapUpdate(RapUpdate {
                     timestamp,
@@ -188,7 +183,6 @@ mod tests {
             Code::Integer(1678939600),
             Code::Integer(0),
             Code::String(String::from("3016210752")),
-            Code::Integer(0),
             Code::Integer(108),
         ];
 
@@ -207,7 +201,6 @@ mod tests {
             Code::Integer(1678939605),
             Code::Integer(1),
             Code::String(String::from("3016210752")),
-            Code::Integer(0),
             Code::Integer(92),
         ];
 
@@ -227,6 +220,9 @@ mod tests {
             Code::Integer(0),
             Code::String(String::from("3016210752")),
             Code::Integer(0),
+            Code::Integer(0),
+            Code::Integer(0),
+            Code::Integer(0),
         ];
 
         assert!(Activity::from_raw(codes).is_err());
@@ -238,7 +234,6 @@ mod tests {
             Code::Integer(1678939600),
             Code::String(String::from("invalid")),
             Code::String(String::from("3016210752")),
-            Code::Integer(0),
             Code::Integer(108),
         ];
 
@@ -251,7 +246,6 @@ mod tests {
             Code::String(String::from("invalid")),
             Code::Integer(0),
             Code::String(String::from("3016210752")),
-            Code::Integer(0),
             Code::Integer(108),
         ];
 
@@ -264,7 +258,6 @@ mod tests {
             Code::Integer(1678939600),
             Code::Integer(0),
             Code::String(String::from("invalid")),
-            Code::Integer(0),
             Code::Integer(108),
         ];
 
@@ -277,7 +270,6 @@ mod tests {
             Code::Integer(1678939600),
             Code::Integer(0),
             Code::String(String::from("3016210752")),
-            Code::Integer(0),
             Code::String(String::from("invalid")),
         ];
 
@@ -290,7 +282,6 @@ mod tests {
             Code::Integer(1678939605),
             Code::Integer(1),
             Code::String(String::from("3016210752")),
-            Code::Integer(0),
             Code::String(String::from("invalid")),
         ];
 
