@@ -8,13 +8,16 @@ license = "MIT"
 name = "roli"
 readme = "README.md"
 repository = "https://github.com/fekie/roli"
-version = "0.7.2"
+version = "0.8.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-reqwest = { version = "0.11.15", default-features=false, features = ["json", "rustls-tls"] }
-serde = {version="1.0.158", features=["derive"]}
+reqwest = { version = "0.11.15", default-features = false, features = [
+    "json",
+    "rustls-tls",
+] }
+serde = { version = "1.0.158", features = ["derive"] }
 thiserror = "1.0.40"
 
 [dev-dependencies]
